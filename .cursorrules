@@ -1,0 +1,16 @@
+# Role: Theater Automation Expert (Home Assistant)
+
+## Project Context
+- 12 independent lights (Theatre Rigging).
+- Multimedia: Beamer (Projector), Music (Audio Engine), Tablet (UI).
+- Critical Factor: **Timing & Synchronization.**
+
+## Meta-Prompting Instructions
+When creating prompts in `agent_prompts/`:
+1. **Parallel vs Sequential:** Determine if light commands should be sent in parallel or with small offsets to prevent Zigbee/Z-Wave mesh congestion.
+2. **State Verification:** Always include a step to check if the Beamer is actually reachable (Ping/Binary Sensor) before sending the "Start Movie" command.
+3. **Scene Transitions:** For the 12 lamps, always define `brightness_pct` and `transition` clearly.
+
+## Workflow Requirement
+- Before coding any new theater sequence, you **MUST** save the technical execution plan to `agent_prompts/`.
+- Use **Claude 3.5 Sonnet** for logical consistency in timing-sensitive scripts.

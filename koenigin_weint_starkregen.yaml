@@ -1,0 +1,691 @@
+# ╔══════════════════════════════════════════════════════════════════╗
+# ║          Königin Weint – Starkregen Final  (HA 2024+)           ║
+# ║                                                                  ║
+# ║  Farblogik:                                                      ║
+# ║    – Intro + CSV-Beginn:  nur Gelb / Blau / Rot                  ║
+# ║    – Slider ≥ 40:         volle 12-Farb-Palette (Vollsättigung) ║
+# ║    – Nie gleiche Lampe zweimal hintereinander                    ║
+# ║    – Nie gleiche Farbe zweimal an der gleichen Lampe             ║
+# ║                                                                  ║
+# ║  Struktur:                                                       ║
+# ║    Ast 1 – Fixe Choreografie: Intro (0-10s) → Musik-Cue         ║
+# ║             → CSV-synchrone MIDI-Tränen (hardgecodete Deltas)   ║
+# ║    Ast 2 – Geschwindigkeitsrampe (regen_aktuell → regen_tempo)  ║
+# ║    Ast 3 – Dynamischer Starkregen-Loop (slider-basiert)         ║
+# ╚══════════════════════════════════════════════════════════════════╝
+
+alias: Königin Weint - Starkregen Final
+mode: restart
+
+sequence:
+  - variables:
+      script_start_ts: "{{ as_timestamp(now()) }}"
+
+  - action: input_number.set_value
+    target:
+      entity_id: input_number.regen_aktuell
+    data:
+      value: "{{ states('input_number.regen_tempo') | float(0) }}"
+
+  - action: light.turn_off
+    target:
+      entity_id:
+        - light.l1
+        - light.l2
+        - light.l3
+        - light.l4
+        - light.l5
+        - light.l6
+        - light.l7
+        - light.l8
+        - light.l9
+        - light.l10
+        - light.l11
+        - light.l12
+
+  # ══════════════════════════════════════════════════════════════════
+  - parallel:
+
+      # ──────────────────────────────────────────────────────────────
+      # AST 1 │ Fixe Choreografie
+      # ──────────────────────────────────────────────────────────────
+      - sequence:
+
+          # Tracking-Variablen für den Intro-Loop initialisieren
+          - variables:
+              letzte_intro_lampe: ""
+              letzte_intro_farbe_idx: -1
+
+          # ── INTRO: sanftes Schluchzen (0 – 10 Sekunden) ──────────
+          # Farb-Palette Intro:  0=Gelb, 1=Blau, 2=Rot
+          - repeat:
+              while:
+                - condition: template
+                  value_template: >-
+                    {{ (as_timestamp(now()) - (script_start_ts | float)) < 9.5 }}
+              sequence:
+                # Lampe: nie gleiche wie zuletzt
+                - variables:
+                    intro_light: >-
+                      {{ ['light.l1','light.l2','light.l3','light.l4','light.l5',
+                         'light.l6','light.l7','light.l8','light.l9','light.l10',
+                         'light.l11','light.l12']
+                         | reject('equalto', letzte_intro_lampe) | list | random }}
+                # Farb-Index: nie gleicher wie zuletzt (aus 3er-Palette)
+                - variables:
+                    intro_farbe_idx: >-
+                      {{ range(3)
+                         | reject('equalto', letzte_intro_farbe_idx | int(-1))
+                         | list | random }}
+                - variables:
+                    intro_farbe: >-
+                      {{ [[255,255,0],[0,0,255],[255,0,0]][intro_farbe_idx | int] }}
+                - action: script.turn_on
+                  target:
+                    entity_id: script.einzeltropfen
+                  data:
+                    variables:
+                      target_light: "{{ intro_light }}"
+                      drop_color: "{{ intro_farbe }}"
+                # Tracking aktualisieren
+                - variables:
+                    letzte_intro_lampe: "{{ intro_light }}"
+                    letzte_intro_farbe_idx: "{{ intro_farbe_idx }}"
+                # Langsame, unregelmäßige Schluchz-Pausen (1,2 – 2,5 s)
+                - delay:
+                    seconds: "{{ range(12, 26) | random / 10.0 }}"
+
+          # Puffer: exakt auf t = 10,0 s warten
+          - delay:
+              seconds: >-
+                {{ [10.0 - (as_timestamp(now()) - (script_start_ts | float)), 0.0] | max }}
+
+          # ── MUSIK-CUE bei t = 10 s ────────────────────────────────
+          # ↓ Entität und Pfad an eigene Installation anpassen!
+          - action: media_player.play_media
+            target:
+              entity_id: media_player.buehne
+            data:
+              media_content_id: /local/music/koenigin_weint.mp3
+              media_content_type: music
+
+          # ── MIDI-SYNCHRONE TRÄNEN (hardgecodete CSV-Deltas) ───────
+          #
+          # Farb-Palette: Gelb=[255,255,0]  Blau=[0,0,255]  Rot=[255,0,0]
+          #
+          # Lampen-Zuweisung: keine Lampe zweimal hintereinander,
+          # keine Lampe zweimal die gleiche Farbe.
+          # Jede Lampe rotiert: ihre erste Farbe → andere → andere → …
+          #
+          # Bsp. l3 (Pos. 1,7,12,17,22,26): R→Y→B→R→Y→B
+          #      l1 (Pos. 2,8,11,16,21,27): Y→B→R→Y→B→R
+          #      l5 (Pos. 3,6,13,18,23,28): B→R→Y→B→R→Y
+          #      l4 (Pos. 4,9,15,20,25,30): Y→B→R→Y→B→R
+          #      l2 (Pos. 5,10,14,19,24,29): B→R→Y→B→R→Y
+          #
+          # Nr. │ t (s)  │ delta (ms) │ Lampe │ Farbe
+
+          #   1 │  0.302 │        302 │ l3    │ Rot
+          - delay:
+              milliseconds: 302
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l3
+                drop_color: [255, 0, 0]
+
+          #   2 │  0.314 │         12 │ l1    │ Gelb
+          - delay:
+              milliseconds: 12
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l1
+                drop_color: [255, 255, 0]
+
+          #   3 │  0.592 │        278 │ l5    │ Blau
+          - delay:
+              milliseconds: 278
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l5
+                drop_color: [0, 0, 255]
+
+          #   4 │  0.697 │        105 │ l4    │ Gelb
+          - delay:
+              milliseconds: 105
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l4
+                drop_color: [255, 255, 0]
+
+          #   5 │  0.697 │          1 │ l2    │ Blau  (Simultanakkord → 1 ms)
+          - delay:
+              milliseconds: 1
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l2
+                drop_color: [0, 0, 255]
+
+          #   6 │  0.835 │        138 │ l5    │ Rot
+          - delay:
+              milliseconds: 138
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l5
+                drop_color: [255, 0, 0]
+
+          #   7 │  0.859 │         24 │ l3    │ Gelb
+          - delay:
+              milliseconds: 24
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l3
+                drop_color: [255, 255, 0]
+
+          #   8 │  1.115 │        256 │ l1    │ Blau
+          - delay:
+              milliseconds: 256
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l1
+                drop_color: [0, 0, 255]
+
+          #   9 │  1.266 │        151 │ l4    │ Blau
+          - delay:
+              milliseconds: 151
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l4
+                drop_color: [0, 0, 255]
+
+          #  10 │  1.393 │        127 │ l2    │ Rot
+          - delay:
+              milliseconds: 127
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l2
+                drop_color: [255, 0, 0]
+
+          #  11 │  1.521 │        128 │ l1    │ Rot
+          - delay:
+              milliseconds: 128
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l1
+                drop_color: [255, 0, 0]
+
+          #  12 │  1.672 │        151 │ l3    │ Blau
+          - delay:
+              milliseconds: 151
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l3
+                drop_color: [0, 0, 255]
+
+          #  13 │  1.776 │        104 │ l5    │ Gelb
+          - delay:
+              milliseconds: 104
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l5
+                drop_color: [255, 255, 0]
+
+          #  14 │  1.939 │        163 │ l2    │ Gelb
+          - delay:
+              milliseconds: 163
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l2
+                drop_color: [255, 255, 0]
+
+          #  15 │  2.045 │        106 │ l4    │ Rot
+          - delay:
+              milliseconds: 106
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l4
+                drop_color: [255, 0, 0]
+
+          #  16 │  2.196 │        151 │ l1    │ Gelb
+          - delay:
+              milliseconds: 151
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l1
+                drop_color: [255, 255, 0]
+
+          #  17 │  2.463 │        267 │ l3    │ Rot
+          - delay:
+              milliseconds: 267
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l3
+                drop_color: [255, 0, 0]
+
+          #  18 │  2.463 │          1 │ l5    │ Blau  (Simultanakkord → 1 ms)
+          - delay:
+              milliseconds: 1
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l5
+                drop_color: [0, 0, 255]
+
+          #  19 │  2.579 │        116 │ l2    │ Blau
+          - delay:
+              milliseconds: 116
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l2
+                drop_color: [0, 0, 255]
+
+          #  20 │  2.846 │        267 │ l4    │ Gelb
+          - delay:
+              milliseconds: 267
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l4
+                drop_color: [255, 255, 0]
+
+          #  21 │  2.997 │        151 │ l1    │ Blau
+          - delay:
+              milliseconds: 151
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l1
+                drop_color: [0, 0, 255]
+
+          #  22 │  3.008 │         11 │ l3    │ Gelb
+          - delay:
+              milliseconds: 11
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l3
+                drop_color: [255, 255, 0]
+
+          #  23 │  3.403 │        395 │ l5    │ Rot
+          - delay:
+              milliseconds: 395
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l5
+                drop_color: [255, 0, 0]
+
+          #  24 │  3.577 │        174 │ l2    │ Rot
+          - delay:
+              milliseconds: 174
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l2
+                drop_color: [255, 0, 0]
+
+          #  25 │  3.960 │        383 │ l4    │ Blau
+          - delay:
+              milliseconds: 383
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l4
+                drop_color: [0, 0, 255]
+
+          #  26 │  4.078 │        118 │ l3    │ Blau
+          - delay:
+              milliseconds: 118
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l3
+                drop_color: [0, 0, 255]
+
+          #  27 │  4.309 │        231 │ l1    │ Rot
+          - delay:
+              milliseconds: 231
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l1
+                drop_color: [255, 0, 0]
+
+          #  28 │  4.473 │        164 │ l5    │ Gelb
+          - delay:
+              milliseconds: 164
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l5
+                drop_color: [255, 255, 0]
+
+          #  29 │  4.623 │        150 │ l2    │ Gelb
+          - delay:
+              milliseconds: 150
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l2
+                drop_color: [255, 255, 0]
+
+          #  30 │  4.902 │        279 │ l4    │ Rot
+          - delay:
+              milliseconds: 279
+          - action: script.turn_on
+            target:
+              entity_id: script.einzeltropfen
+            data:
+              variables:
+                target_light: light.l4
+                drop_color: [255, 0, 0]
+
+          # ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+          # HIER die restlichen ~1084 Flash-Blöcke einfügen
+          # (CSV-Zeilen 31 – 1114, dieselbe delay + script.turn_on Logik).
+          #
+          # Python-Generator (Farben rotieren ebenfalls pro Lampe):
+          #
+          #   import csv, itertools
+          #   lights  = ['light.l1','light.l2','light.l3','light.l4','light.l5']
+          #   palette = [[255,255,0],[0,0,255],[255,0,0],
+          #              [255,128,0],[0,255,0],[0,255,255],
+          #              [128,0,255],[255,0,255],[255,0,128],
+          #              [0,128,255],[128,255,0],[255,64,0]]
+          #   color_cycles = {l: itertools.cycle(palette[i::5])
+          #                   for i, l in enumerate(lights)}
+          #   rows = list(csv.DictReader(open('lampen_timings.csv')))
+          #   prev_t, prev_light = 0.0, ''
+          #   for i, row in enumerate(rows):
+          #     t      = float(row['Zeit_in_Sekunden'])
+          #     delta  = max(1, round((t - prev_t) * 1000))
+          #     # Lampe: nie gleiche wie zuletzt
+          #     cands  = [l for l in lights if l != prev_light]
+          #     import random; light = random.choice(cands)
+          #     color  = next(color_cycles[light])
+          #     prev_t, prev_light = t, light
+          #     print(f"          # {i+31:4d} │ {t:7.3f} │ {delta:10d} │ {light[-2:]}")
+          #     print(f"          - delay:\n              milliseconds: {delta}")
+          #     print(f"          - action: script.turn_on\n"
+          #           f"            target:\n              entity_id: script.einzeltropfen\n"
+          #           f"            data:\n              variables:\n"
+          #           f"                target_light: {light}\n"
+          #           f"                drop_color: {list(color)}\n")
+          # ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+
+      # ──────────────────────────────────────────────────────────────
+      # AST 2 │ Geschwindigkeitsrampe
+      # Gleitet regen_aktuell sanft in Richtung regen_tempo (±2 / 200ms)
+      # ──────────────────────────────────────────────────────────────
+      - sequence:
+          - repeat:
+              while:
+                - condition: template
+                  value_template: "{{ true }}"
+              sequence:
+                - variables:
+                    ziel: "{{ states('input_number.regen_tempo') | float(0) }}"
+                    aktuell: "{{ states('input_number.regen_aktuell') | float(0) }}"
+                    neu: |
+                      {% if ziel > aktuell %}
+                        {{ [aktuell + 2, ziel] | min }}
+                      {% elif ziel < aktuell %}
+                        {{ [aktuell - 2, ziel] | max }}
+                      {% else %}
+                        {{ aktuell }}
+                      {% endif %}
+                - action: input_number.set_value
+                  target:
+                    entity_id: input_number.regen_aktuell
+                  data:
+                    value: "{{ neu }}"
+                - delay: "00:00:00.2"
+
+      # ──────────────────────────────────────────────────────────────
+      # AST 3 │ Dynamischer Starkregen-Loop
+      #
+      # Farb-Palette (Index):
+      #   0=Gelb  1=Blau   2=Rot      ← Slider < 40: nur diese 3
+      #   3=Orange  4=Grün  5=Cyan     ← Slider ≥ 40: alle 12
+      #   6=Violett  7=Magenta  8=Pink
+      #   9=Hellblau  10=Gelbgrün  11=Orange-Rot
+      #
+      # Regeln:
+      #   – nie gleiche Lampe zweimal hintereinander  (letzte_lampe)
+      #   – nie gleiche Farbe zweimal an gleicher Lampe
+      #     (letzte_farbe_l1 … letzte_farbe_l5 speichern den letzten
+      #      Farb-Index je Lampe)
+      # ──────────────────────────────────────────────────────────────
+      - sequence:
+          # Tracking-Variablen initialisieren
+          - variables:
+              letzte_lampe: ""
+              letzte_farbe_l1: -1
+              letzte_farbe_l2: -1
+              letzte_farbe_l3: -1
+              letzte_farbe_l4: -1
+              letzte_farbe_l5: -1
+              letzte_farbe_l6: -1
+              letzte_farbe_l7: -1
+              letzte_farbe_l8: -1
+              letzte_farbe_l9: -1
+              letzte_farbe_l10: -1
+              letzte_farbe_l11: -1
+              letzte_farbe_l12: -1
+
+          - repeat:
+              while:
+                - condition: template
+                  value_template: "{{ true }}"
+              sequence:
+
+                # Schritt 1: Basis-Werte
+                - variables:
+                    slider_val: "{{ states('input_number.regen_aktuell') | float(0) }}"
+                    base_delay: "{{ [4.0 - (slider_val * 0.0375), 0.25] | max }}"
+                    palette_groesse: "{{ 3 if slider_val < 40 else 12 }}"
+
+                # Schritt 2: Lampe wählen (nie gleiche wie zuletzt;
+                #            ab Slider 20 bevorzugt ausgeschaltene)
+                - variables:
+                    selected_light: |
+                      {% set alle = ['light.l1','light.l2','light.l3','light.l4','light.l5',
+                        'light.l6','light.l7','light.l8','light.l9','light.l10',
+                        'light.l11','light.l12'] %}
+                      {% set kand = alle | reject('equalto', letzte_lampe) | list %}
+                      {% if slider_val >= 20 %}
+                        {% set frei = kand | select('is_state', 'off') | list %}
+                        {{ (frei if frei | count > 0 else kand) | random }}
+                      {% else %}
+                        {{ kand | random }}
+                      {% endif %}
+
+                # Schritt 3: Letzten Farb-Index dieser Lampe auslesen
+                - variables:
+                    letzte_farbe_fuer_licht: |
+                      {% if   selected_light == 'light.l1'  %}{{ letzte_farbe_l1  | int(-1) }}
+                      {% elif selected_light == 'light.l2'  %}{{ letzte_farbe_l2  | int(-1) }}
+                      {% elif selected_light == 'light.l3'  %}{{ letzte_farbe_l3  | int(-1) }}
+                      {% elif selected_light == 'light.l4'  %}{{ letzte_farbe_l4  | int(-1) }}
+                      {% elif selected_light == 'light.l5'  %}{{ letzte_farbe_l5  | int(-1) }}
+                      {% elif selected_light == 'light.l6'  %}{{ letzte_farbe_l6  | int(-1) }}
+                      {% elif selected_light == 'light.l7'  %}{{ letzte_farbe_l7  | int(-1) }}
+                      {% elif selected_light == 'light.l8'  %}{{ letzte_farbe_l8  | int(-1) }}
+                      {% elif selected_light == 'light.l9'  %}{{ letzte_farbe_l9  | int(-1) }}
+                      {% elif selected_light == 'light.l10' %}{{ letzte_farbe_l10 | int(-1) }}
+                      {% elif selected_light == 'light.l11' %}{{ letzte_farbe_l11 | int(-1) }}
+                      {% else %}{{ letzte_farbe_l12 | int(-1) }}{% endif %}
+
+                # Schritt 4: Neuen Farb-Index wählen (nicht derselbe wie zuletzt)
+                - variables:
+                    farbe_idx: |
+                      {% set n    = palette_groesse | int %}
+                      {% set excl = letzte_farbe_fuer_licht | int(-1) %}
+                      {{ range(n) | reject('equalto', excl) | list | random }}
+
+                # Schritt 5: RGB-Wert aus Palette holen
+                - variables:
+                    selected_color: |
+                      {% set palette = [
+                        [255,255,0],[0,0,255],[255,0,0],
+                        [255,128,0],[0,255,0],[0,255,255],
+                        [128,0,255],[255,0,255],[255,0,128],
+                        [0,128,255],[128,255,0],[255,64,0]
+                      ] %}
+                      {{ palette[farbe_idx | int] }}
+
+                # Schritt 6: Flash auslösen
+                - action: script.turn_on
+                  target:
+                    entity_id: script.einzeltropfen
+                  data:
+                    variables:
+                      target_light: "{{ selected_light }}"
+                      drop_color: "{{ selected_color }}"
+
+                # Schritt 7: Tracking aktualisieren
+                - variables:
+                    letzte_lampe: "{{ selected_light }}"
+                    letzte_farbe_l1: >-
+                      {{ farbe_idx | int if selected_light == 'light.l1'
+                         else letzte_farbe_l1 | int(-1) }}
+                    letzte_farbe_l2: >-
+                      {{ farbe_idx | int if selected_light == 'light.l2'
+                         else letzte_farbe_l2 | int(-1) }}
+                    letzte_farbe_l3: >-
+                      {{ farbe_idx | int if selected_light == 'light.l3'
+                         else letzte_farbe_l3 | int(-1) }}
+                    letzte_farbe_l4: >-
+                      {{ farbe_idx | int if selected_light == 'light.l4'
+                         else letzte_farbe_l4 | int(-1) }}
+                    letzte_farbe_l5: >-
+                      {{ farbe_idx | int if selected_light == 'light.l5'
+                         else letzte_farbe_l5 | int(-1) }}
+                    letzte_farbe_l6: >-
+                      {{ farbe_idx | int if selected_light == 'light.l6'
+                         else letzte_farbe_l6 | int(-1) }}
+                    letzte_farbe_l7: >-
+                      {{ farbe_idx | int if selected_light == 'light.l7'
+                         else letzte_farbe_l7 | int(-1) }}
+                    letzte_farbe_l8: >-
+                      {{ farbe_idx | int if selected_light == 'light.l8'
+                         else letzte_farbe_l8 | int(-1) }}
+                    letzte_farbe_l9: >-
+                      {{ farbe_idx | int if selected_light == 'light.l9'
+                         else letzte_farbe_l9 | int(-1) }}
+                    letzte_farbe_l10: >-
+                      {{ farbe_idx | int if selected_light == 'light.l10'
+                         else letzte_farbe_l10 | int(-1) }}
+                    letzte_farbe_l11: >-
+                      {{ farbe_idx | int if selected_light == 'light.l11'
+                         else letzte_farbe_l11 | int(-1) }}
+                    letzte_farbe_l12: >-
+                      {{ farbe_idx | int if selected_light == 'light.l12'
+                         else letzte_farbe_l12 | int(-1) }}
+
+                # Schritt 8: Warten (±20 % Jitter)
+                - delay:
+                    seconds: "{{ base_delay * ((range(80, 120) | random) / 100.0) }}"
+
+---
+# ╔══════════════════════════════════════════════════════════════════╗
+# ║                  Einzeltropfen (Hilfs-Script)                   ║
+# ╚══════════════════════════════════════════════════════════════════╝
+
+alias: Einzeltropfen
+mode: parallel
+description: "Kurzer Licht-Flash (an → 300 ms → aus) für eine Lampe"
+fields:
+  target_light:
+    description: Welche Lampe? (z.B. light.l3)
+    required: true
+  drop_color:
+    description: "RGB-Farbe als Liste, z.B. [255, 0, 0]"
+    required: true
+sequence:
+  - action: light.turn_on
+    target:
+      entity_id: "{{ target_light }}"
+    data:
+      rgb_color: "{{ drop_color }}"
+      brightness_pct: 100
+  - delay:
+      milliseconds: 300
+  - action: light.turn_off
+    target:
+      entity_id: "{{ target_light }}"

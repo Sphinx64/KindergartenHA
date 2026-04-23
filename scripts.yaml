@@ -1,0 +1,2261 @@
+alt_einzeltropfen:
+  alias: Einzeltropfen
+  mode: parallel
+  max: 30
+  fields:
+    target_light:
+      description: Welche Lampe?
+    drop_color:
+      description: Farbe als RGB-Liste
+  sequence:
+  - action: light.turn_on
+    target:
+      entity_id: '{{ target_light }}'
+    data:
+      rgb_color: '{{ drop_color }}'
+      brightness_pct: 100
+      transition: 0
+  - delay:
+      milliseconds: 400
+  - action: light.turn_on
+    target:
+      entity_id: '{{ target_light }}'
+    data:
+      brightness_pct: 40
+      transition: 0.35
+  - delay:
+      milliseconds: 400
+  - action: light.turn_on
+    target:
+      entity_id: '{{ target_light }}'
+    data:
+      brightness_pct: 12
+      transition: 0.35
+  - delay:
+      milliseconds: 500
+  - action: light.turn_off
+    target:
+      entity_id: '{{ target_light }}'
+  description: 'Tropfen: Flash dann 3-stufiger Fade ueber 1.3s (Tuya-kompatibel)'
+
+alt_theater_neutral_v2:
+  alias: 'Theater: Neutral v2'
+  icon: mdi:lightbulb-on-outline
+  mode: restart
+  sequence:
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.theater_master_stop_skip
+    data:
+      value: script.alt_theater_neutral_v2
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_master_stop_v2
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      rgb_color: '{% set c = states(''input_text.theater_farbe_neutral'') %}{{ (c
+        if '','' in c else ''255,255,255'').split('','') | map(''int'') | list }}'
+      brightness_pct: '{{ [(states(''input_number.theater_master_brightness'') | float(500)
+        / 10) | int, 100] | min }}'
+      transition: 0
+
+alt_theater_blau_v2:
+  alias: 'Theater: Blau v2'
+  icon: mdi:water
+  mode: restart
+  sequence:
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.theater_master_stop_skip
+    data:
+      value: script.alt_theater_blau_v2
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_master_stop_v2
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      rgb_color: '{% set c = states(''input_text.theater_farbe_neutral'') %}{{ (c
+        if '','' in c else ''255,255,255'').split('','') | map(''int'') | list }}'
+      brightness_pct: '{{ [(states(''input_number.theater_master_brightness'') | float(500)
+        / 10) | int, 100] | min }}'
+      transition: 0
+  - delay: '00:00:00.5'
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l5
+      - light.l9
+    data:
+      rgb_color: '{% set c = states(''input_text.theater_farbe_blau'') %}{{ (c if
+        '','' in c else ''0,150,255'').split('','') | map(''int'') | list }}'
+      brightness_pct: 100
+      transition: 3
+  - delay: '00:00:00.5'
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l2
+      - light.l6
+      - light.l10
+    data:
+      rgb_color: '{% set c = states(''input_text.theater_farbe_blau'') %}{{ (c if
+        '','' in c else ''0,150,255'').split('','') | map(''int'') | list }}'
+      brightness_pct: 100
+      transition: 3
+  - delay: '00:00:00.5'
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l3
+      - light.l7
+      - light.l11
+    data:
+      rgb_color: '{% set c = states(''input_text.theater_farbe_blau'') %}{{ (c if
+        '','' in c else ''0,150,255'').split('','') | map(''int'') | list }}'
+      brightness_pct: 100
+      transition: 3
+  - delay: '00:00:00.5'
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l4
+      - light.l8
+      - light.l12
+    data:
+      rgb_color: '{% set c = states(''input_text.theater_farbe_blau'') %}{{ (c if
+        '','' in c else ''0,150,255'').split('','') | map(''int'') | list }}'
+      brightness_pct: 100
+      transition: 3
+
+alt_theater_rot_v2:
+  alias: 'Theater: Rot v2'
+  icon: mdi:fire
+  mode: restart
+  sequence:
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.theater_master_stop_skip
+    data:
+      value: script.alt_theater_rot_v2
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_master_stop_v2
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      rgb_color: '{% set c = states(''input_text.theater_farbe_neutral'') %}{{ (c
+        if '','' in c else ''255,255,255'').split('','') | map(''int'') | list }}'
+      brightness_pct: '{{ [(states(''input_number.theater_master_brightness'') | float(500)
+        / 10) | int, 100] | min }}'
+      transition: 0
+  - delay: 00:00:01
+  - variables:
+      br: '{{ [(states(''input_number.theater_master_brightness'') | float(500) /
+        10) | int, 100] | min }}'
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      brightness_pct: '{{ [br * 0.18, 1] | max | int }}'
+      transition: 0.18
+  - delay: '00:00:00.2'
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      brightness_pct: '{{ br }}'
+      transition: 0.1
+  - delay: '00:00:00.18'
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      brightness_pct: '{{ [br * 0.08, 1] | max | int }}'
+      transition: 0.1
+  - delay: '00:00:00.12'
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      brightness_pct: '{{ br }}'
+      transition: 0.07
+  - delay: '00:00:00.1'
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      brightness_pct: '{{ [br * 0.05, 1] | max | int }}'
+      transition: 0.08
+  - delay: '00:00:00.1'
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      brightness_pct: '{{ br }}'
+      transition: 0.05
+  - delay: '00:00:00.08'
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l5
+      - light.l9
+    data:
+      brightness_pct: '{{ br }}'
+      transition: 0
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l4
+      - light.l8
+      - light.l12
+    data:
+      brightness_pct: '{{ [br * 0.02, 1] | max | int }}'
+      transition: 0
+  - delay: '00:00:00.07'
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l4
+      - light.l8
+      - light.l12
+    data:
+      brightness_pct: '{{ br }}'
+      transition: 0
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l5
+      - light.l9
+    data:
+      brightness_pct: '{{ [br * 0.02, 1] | max | int }}'
+      transition: 0
+  - delay: '00:00:00.06'
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l2
+      - light.l7
+      - light.l10
+    data:
+      brightness_pct: '{{ br }}'
+      transition: 0
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l8
+      - light.l9
+      - light.l11
+      - light.l12
+    data:
+      brightness_pct: '{{ [br * 0.02, 1] | max | int }}'
+      transition: 0
+  - delay: '00:00:00.06'
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l3
+      - light.l6
+      - light.l11
+    data:
+      brightness_pct: '{{ br }}'
+      transition: 0
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l4
+      - light.l5
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l12
+    data:
+      brightness_pct: '{{ [br * 0.02, 1] | max | int }}'
+      transition: 0
+  - delay: '00:00:00.06'
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l6
+      - light.l12
+    data:
+      brightness_pct: '{{ br }}'
+      transition: 0
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+    data:
+      brightness_pct: '{{ [br * 0.02, 1] | max | int }}'
+      transition: 0
+  - delay: '00:00:00.05'
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l4
+      - light.l9
+      - light.l11
+    data:
+      brightness_pct: '{{ br }}'
+      transition: 0
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l10
+      - light.l12
+    data:
+      brightness_pct: '{{ [br * 0.02, 1] | max | int }}'
+      transition: 0
+  - delay: '00:00:00.05'
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      brightness_pct: '{{ br }}'
+      transition: 0
+  - delay: '00:00:00.07'
+  - action: light.turn_off
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+  - delay: '00:00:00.4'
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      rgb_color: '{% set c = states(''input_text.theater_farbe_rot'') %}{{ (c if '',''
+        in c else ''255,0,0'').split('','') | map(''int'') | list }}'
+      brightness_pct: 100
+      transition: 0
+
+alt_theater_gelb_v2:
+  alias: 'Theater: Gelb v2'
+  icon: mdi:white-balance-sunny
+  mode: restart
+  description: Master-Helligkeit (input_number.theater_master_brightness), inkl. Werte
+    >100 wie bei Finale.
+  sequence:
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.theater_master_stop_skip
+    data:
+      value: script.alt_theater_gelb_v2
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_master_stop_v2
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      rgb_color: '{% set c = states(''input_text.theater_farbe_neutral'') %}{{ (c
+        if '','' in c else ''255,255,255'').split('','') | map(''int'') | list }}'
+      brightness_pct: '{{ [(states(''input_number.theater_master_brightness'') | float(500)
+        / 10) | int, 100] | min }}'
+      transition: 0
+  - delay: 00:00:01
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      rgb_color: '{% set c = states(''input_text.theater_farbe_gelb'') %}{{ (c if
+        '','' in c else ''255,126,13'').split('','') | map(''int'') | list }}'
+      brightness_pct: 100
+      transition: 6
+
+alt_theater_giftgelb_v2:
+  alias: 'Theater: Giftgelb v2'
+  icon: mdi:palette
+  mode: restart
+  description: Einmaliger Fade auf Giftgelb (Master-Helligkeit, transition 6 s).
+  sequence:
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.theater_master_stop_skip
+    data:
+      value: script.alt_theater_giftgelb_v2
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_master_stop_v2
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      rgb_color: '{% set c = states(''input_text.theater_farbe_neutral'') %}{{ (c
+        if '','' in c else ''255,255,255'').split('','') | map(''int'') | list }}'
+      brightness_pct: '{{ [(states(''input_number.theater_master_brightness'') | float(500)
+        / 10) | int, 100] | min }}'
+      transition: 0
+  - delay: 00:00:01
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      rgb_color: '{% set c = states(''input_text.theater_farbe_giftgelb'') %}{{ (c
+        if '','' in c else ''180,255,0'').split('','') | map(''int'') | list }}'
+      brightness_pct: '{{ [(states(''input_number.theater_master_brightness'') | float(500)
+        / 10) | int, 100] | min }}'
+      transition: 6
+
+alt_theater_grau_v2:
+  alias: 'Theater: Grau v2'
+  icon: mdi:cloud
+  mode: restart
+  fields:
+    skip_entity_id:
+      description: Veraltet – ignoriert
+      required: false
+      selector:
+        text: {}
+  sequence:
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.theater_master_stop_skip
+    data:
+      value: script.alt_theater_grau_v2
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_master_stop_v2
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      rgb_color: '{% set c = states(''input_text.theater_farbe_grau'') %}{{ (c if
+        '','' in c else ''252,237,252'').split('','') | map(''int'') | list }}'
+      brightness_pct: '{{ [(states(''input_number.theater_master_brightness'') | float(500)
+        / 10) | int, 100] | min }}'
+      transition: 0
+  - variables:
+      s: '{{ states(''input_number.theater_master_speed'') | int(50) }}'
+  - delay: 00:00:01
+  - repeat:
+      while:
+      - condition: template
+        value_template: 'true'
+      sequence:
+      - action: light.turn_on
+        target:
+          entity_id:
+          - light.l1
+          - light.l2
+          - light.l3
+          - light.l4
+          - light.l5
+          - light.l6
+          - light.l7
+          - light.l8
+          - light.l9
+          - light.l10
+          - light.l11
+          - light.l12
+        data:
+          rgb_color: '{% set c = states(''input_text.theater_farbe_grau'') %}{{ (c
+            if '','' in c else ''252,237,252'').split('','') | map(''int'') | list
+            }}'
+          brightness_pct: '{{ [(states(''input_number.theater_master_brightness'')
+            | float(500) / 10 * 0.8) | int, 1] | max }}'
+          transition: '{{ [3.5 - (s / 100.0) * 3.2, 0.2] | max | round(2) }}'
+      - delay:
+          seconds: '{{ [3.8 - (s / 100.0) * 3.5, 0.3] | max | round(1) }}'
+      - action: light.turn_on
+        target:
+          entity_id:
+          - light.l1
+          - light.l2
+          - light.l3
+          - light.l4
+          - light.l5
+          - light.l6
+          - light.l7
+          - light.l8
+          - light.l9
+          - light.l10
+          - light.l11
+          - light.l12
+        data:
+          rgb_color: '{% set c = states(''input_text.theater_farbe_grau'') %}{{ (c
+            if '','' in c else ''252,237,252'').split('','') | map(''int'') | list
+            }}'
+          brightness_pct: '{{ [(states(''input_number.theater_master_brightness'')
+            | float(500) / 10) | int, 100] | min }}'
+          transition: '{{ [3.5 - (s / 100.0) * 3.2, 0.2] | max | round(2) }}'
+      - delay: '00:00:03.5'
+
+alt_theater_streit_lauf_v2:
+  alias: 'Theater: Streit – Phasen 1–6'
+  icon: mdi:lightning-bolt
+  mode: restart
+  fields:
+    skip_entity_id:
+      description: Veraltet – ignoriert
+      required: false
+      selector:
+        text: {}
+  sequence:
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.theater_master_stop_skip
+    data:
+      value: script.alt_theater_streit_lauf_v2
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_master_stop_v2
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.theater_streit_last_lamp
+    data:
+      value: '0'
+  - repeat:
+      while:
+      - condition: template
+        value_template: 'true'
+      sequence:
+      - variables:
+          p: '{{ states(''input_number.theater_streit_phase'') | int(1) }}'
+          s: '{{ states(''input_number.theater_master_speed'') | int(50) }}'
+          br: '{{ [(states(''input_number.theater_master_brightness'') | float(500)
+            / 10) | int, 100] | min }}'
+          lamp: '{% set last = states(''input_text.theater_streit_last_lamp'') | int(0)
+            %}{% set k = range(1, 13) | random %}{% if last >= 1 and last <= 12 and
+            k == last %}light.l{{ (k % 12) + 1 }}{% else %}light.l{{ k }}{% endif
+            %}'
+          ri: '{{ range(2) | random }}'
+          fr: '{% if p in [1,4] and ri|int==0 %}255{% elif p in [1,4] %}0{% elif p
+            in [2,5] and ri|int==0 %}255{% elif p in [2,5] %}255{% elif p in [3,6]
+            and ri|int==0 %}255{% elif p in [3,6] %}0{% else %}255{% endif %}'
+          fg: '{% if p in [1,4] and ri|int==0 %}36{% elif p in [1,4] %}150{% elif
+            p in [2,5] and ri|int==0 %}0{% elif p in [2,5] %}255{% elif p in [3,6]
+            and ri|int==0 %}126{% else %}150{% endif %}'
+          fb: '{% if p in [1,4] and ri|int==0 %}3{% elif p in [1,4] %}255{% elif p
+            in [2,5] and ri|int==0 %}0{% elif p in [2,5] %}0{% elif p in [3,6] and
+            ri|int==0 %}13{% else %}255{% endif %}'
+          cr: '{% if p in [1,4] %}255{% elif p in [2,5] %}0{% elif p in [3,6] %}255{%
+            else %}252{% endif %}'
+          cg: '{% if p in [1,4] %}126{% elif p in [2,5] %}150{% elif p in [3,6] %}36{%
+            else %}237{% endif %}'
+          cb: '{% if p in [1,4] %}13{% elif p in [2,5] %}255{% elif p in [3,6] %}3{%
+            else %}255{% endif %}'
+      - action: light.turn_on
+        target:
+          entity_id: '{{ lamp }}'
+        data:
+          rgb_color: '{{ [fr|int, fg|int, fb|int] }}'
+          brightness_pct: 100
+          transition: 0
+      - delay:
+          milliseconds: '{{ [480 - s * 3.5, 85] | max }}'
+      - action: light.turn_on
+        target:
+          entity_id: '{{ lamp }}'
+        data:
+          rgb_color: '{{ [cr|int, cg|int, cb|int] }}'
+          brightness_pct: '{{ br }}'
+          transition: 0
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.theater_streit_last_lamp
+        data:
+          value: '{{ lamp | replace(''light.l'', '''') }}'
+      - delay:
+          milliseconds: '{% set p = states(''input_number.theater_streit_phase'')
+            | int(1) %}{% set s = states(''input_number.theater_master_speed'') |
+            int(50) %}{% set w = ([420 - s * 7.5, 32] | max) | int %}{% if p in [4,5,6]
+            %}{{ (w * 0.42) | int }}{% else %}{{ (w * 0.58) | int }}{% endif %}'
+
+alt_theater_streit_p7_v2:
+  alias: 'Theater: Streit Phase 7 (Chaos → Aus → Grau)'
+  icon: mdi:lightning-bolt-circle
+  mode: restart
+  sequence:
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.theater_master_stop_skip
+    data:
+      value: script.alt_theater_streit_p7_v2
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_master_stop_v2
+  - parallel:
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_chaos_helper_v2
+      data:
+        variables:
+          lamp: light.l1
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_chaos_helper_v2
+      data:
+        variables:
+          lamp: light.l2
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_chaos_helper_v2
+      data:
+        variables:
+          lamp: light.l3
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_chaos_helper_v2
+      data:
+        variables:
+          lamp: light.l4
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_chaos_helper_v2
+      data:
+        variables:
+          lamp: light.l5
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_chaos_helper_v2
+      data:
+        variables:
+          lamp: light.l6
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_chaos_helper_v2
+      data:
+        variables:
+          lamp: light.l7
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_chaos_helper_v2
+      data:
+        variables:
+          lamp: light.l8
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_chaos_helper_v2
+      data:
+        variables:
+          lamp: light.l9
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_chaos_helper_v2
+      data:
+        variables:
+          lamp: light.l10
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_chaos_helper_v2
+      data:
+        variables:
+          lamp: light.l11
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_chaos_helper_v2
+      data:
+        variables:
+          lamp: light.l12
+  - action: light.turn_off
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      transition: 0
+  - delay: 00:00:01
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      rgb_color: '{{ (states(''input_text.theater_farbe_grau'') if '','' in states(''input_text.theater_farbe_grau'')
+        else ''252,237,252'').split('','') | map(''int'') | list }}'
+      brightness_pct: '{{ [(states(''input_number.theater_master_brightness'') | float(500)
+        / 10) | int, 100] | min }}'
+      transition: 2.5
+
+alt_theater_streit_flash_helper_v2:
+  alias: 'Theater: Streit Flash Helper'
+  icon: mdi:flash
+  mode: parallel
+  max: 50
+  fields:
+    lamp:
+      description: Ziel-Lampen-Entity (z.B. light.l1)
+    base_name:
+      description: 'Basisfarbe: ''gelb'' | ''blau'' | ''rot'''
+    flash1_name:
+      description: Erste Flash-Farbe
+    flash2_name:
+      description: Zweite Flash-Farbe
+  sequence:
+  - delay:
+      milliseconds: '{{ range(100, 2500) | random }}'
+  - repeat:
+      while:
+      - condition: template
+        value_template: 'true'
+      sequence:
+      - variables:
+          s: '{{ states(''input_number.theater_master_speed'') | int(50) }}'
+          flash_name: '{{ flash1_name if (range(2) | random) == 0 else flash2_name
+            }}'
+          flash_ms: '{{ [(280 - s * 2) | int, 90] | max | int }}'
+          wait_ms: '{{ [(2500 - s * 22) | int, 200] | max | int + (range(0, 800) |
+            random) }}'
+      - action: light.turn_on
+        target:
+          entity_id: '{{ lamp }}'
+        data:
+          rgb_color: '{% set fs = states(''input_text.theater_farbe_'' ~ flash_name)
+            %}{{ (fs if '','' in fs else ''255,255,255'').split('','') | map(''int'')
+            | list }}'
+          brightness_pct: 100
+          transition: 0
+      - delay:
+          milliseconds: '{{ flash_ms }}'
+      - action: light.turn_on
+        target:
+          entity_id: '{{ lamp }}'
+        data:
+          rgb_color: '{% set bs = states(''input_text.theater_farbe_'' ~ base_name)
+            %}{{ (bs if '','' in bs else ''255,255,255'').split('','') | map(''int'')
+            | list }}'
+          brightness_pct: 50
+          transition: 0.2
+      - delay:
+          milliseconds: '{{ wait_ms }}'
+
+alt_theater_streit_chaos_helper_v2:
+  alias: 'Theater: Streit Chaos Helper'
+  icon: mdi:shuffle-variant
+  mode: parallel
+  max: 12
+  fields:
+    lamp:
+      description: Ziel-Lampen-Entity
+  sequence:
+  - variables:
+      chaos_start: '{{ now().timestamp() }}'
+  - repeat:
+      while:
+      - condition: template
+        value_template: '{{ (now().timestamp() - (chaos_start | float(0))) < 12 }}'
+      sequence:
+      - variables:
+          elapsed: '{{ now().timestamp() - (chaos_start | float(0)) }}'
+          chaos_br: '{{ [(100 - (elapsed | float(0) / 12 * 100)) | int, 0] | max }}'
+          s: '{{ states(''input_number.theater_master_speed'') | int(50) }}'
+          color_name: '{{ [''gelb'',''blau'',''rot''] | random }}'
+      - action: light.turn_on
+        target:
+          entity_id: '{{ lamp }}'
+        data:
+          rgb_color: '{% set cs = states(''input_text.theater_farbe_'' ~ color_name)
+            %}{{ (cs if '','' in cs else ''255,255,255'').split('','') | map(''int'')
+            | list }}'
+          brightness_pct: '{{ chaos_br }}'
+          transition: 0
+      - delay:
+          milliseconds: '{{ [(300 - s * 2) | int, 120] | max | int + (range(0, 200)
+            | random) }}'
+
+alt_theater_streit_naechste_phase_v2:
+  alias: 'Theater: Streit nächste Phase'
+  icon: mdi:skip-next
+  mode: single
+  sequence:
+  - action: input_number.set_value
+    target:
+      entity_id: input_number.theater_streit_phase
+    data:
+      value: '{{ (states(''input_number.theater_streit_phase'') | int(1) % 8) + 1
+        }}'
+
+alt_theater_streit_phase_1_v2:
+  alias: 'Theater: Streit P1 (Giftgelb still)'
+  icon: mdi:circle
+  mode: restart
+  sequence:
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.theater_master_stop_skip
+    data:
+      value: script.alt_theater_streit_phase_1_v2
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_master_stop_v2
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      rgb_color: '{{ (states(''input_text.theater_farbe_giftgelb'') if '','' in states(''input_text.theater_farbe_giftgelb'')
+        else ''180,255,0'').split('','') | map(''int'') | list }}'
+      brightness_pct: 50
+      transition: 0
+
+alt_theater_streit_phase_2_v2:
+  alias: 'Theater: Streit P2 (Blau + Gelb)'
+  icon: mdi:circle
+  mode: restart
+  sequence:
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.theater_master_stop_skip
+    data:
+      value: script.alt_theater_streit_phase_2_v2
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_master_stop_v2
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      rgb_color: '{{ (states(''input_text.theater_farbe_blau'') if '','' in states(''input_text.theater_farbe_blau'')
+        else ''0,150,255'').split('','') | map(''int'') | list }}'
+      brightness_pct: 50
+      transition: 0
+  - delay:
+      milliseconds: 300
+  - parallel:
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l1
+          base_name: blau
+          flash1_name: gelb
+          flash2_name: gelb
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l2
+          base_name: blau
+          flash1_name: gelb
+          flash2_name: gelb
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l3
+          base_name: blau
+          flash1_name: gelb
+          flash2_name: gelb
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l4
+          base_name: blau
+          flash1_name: gelb
+          flash2_name: gelb
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l5
+          base_name: blau
+          flash1_name: gelb
+          flash2_name: gelb
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l6
+          base_name: blau
+          flash1_name: gelb
+          flash2_name: gelb
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l7
+          base_name: blau
+          flash1_name: gelb
+          flash2_name: gelb
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l8
+          base_name: blau
+          flash1_name: gelb
+          flash2_name: gelb
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l9
+          base_name: blau
+          flash1_name: gelb
+          flash2_name: gelb
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l10
+          base_name: blau
+          flash1_name: gelb
+          flash2_name: gelb
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l11
+          base_name: blau
+          flash1_name: gelb
+          flash2_name: gelb
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l12
+          base_name: blau
+          flash1_name: gelb
+          flash2_name: gelb
+
+alt_theater_streit_phase_3_v2:
+  alias: 'Theater: Streit P3 (Rot + Blau/Gelb)'
+  icon: mdi:circle
+  mode: restart
+  sequence:
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.theater_master_stop_skip
+    data:
+      value: script.alt_theater_streit_phase_3_v2
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_master_stop_v2
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      rgb_color: '{{ (states(''input_text.theater_farbe_rot'') if '','' in states(''input_text.theater_farbe_rot'')
+        else ''255,0,0'').split('','') | map(''int'') | list }}'
+      brightness_pct: 50
+      transition: 0
+  - delay:
+      milliseconds: 300
+  - parallel:
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l1
+          base_name: rot
+          flash1_name: blau
+          flash2_name: gelb
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l2
+          base_name: rot
+          flash1_name: blau
+          flash2_name: gelb
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l3
+          base_name: rot
+          flash1_name: blau
+          flash2_name: gelb
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l4
+          base_name: rot
+          flash1_name: blau
+          flash2_name: gelb
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l5
+          base_name: rot
+          flash1_name: blau
+          flash2_name: gelb
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l6
+          base_name: rot
+          flash1_name: blau
+          flash2_name: gelb
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l7
+          base_name: rot
+          flash1_name: blau
+          flash2_name: gelb
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l8
+          base_name: rot
+          flash1_name: blau
+          flash2_name: gelb
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l9
+          base_name: rot
+          flash1_name: blau
+          flash2_name: gelb
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l10
+          base_name: rot
+          flash1_name: blau
+          flash2_name: gelb
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l11
+          base_name: rot
+          flash1_name: blau
+          flash2_name: gelb
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l12
+          base_name: rot
+          flash1_name: blau
+          flash2_name: gelb
+
+alt_theater_streit_phase_4_v2:
+  alias: 'Theater: Streit P4 (Gelb + Rot/Blau)'
+  icon: mdi:circle
+  mode: restart
+  sequence:
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.theater_master_stop_skip
+    data:
+      value: script.alt_theater_streit_phase_4_v2
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_master_stop_v2
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      rgb_color: '{{ (states(''input_text.theater_farbe_gelb'') if '','' in states(''input_text.theater_farbe_gelb'')
+        else ''255,126,13'').split('','') | map(''int'') | list }}'
+      brightness_pct: 50
+      transition: 0
+  - delay:
+      milliseconds: 300
+  - parallel:
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l1
+          base_name: gelb
+          flash1_name: rot
+          flash2_name: blau
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l2
+          base_name: gelb
+          flash1_name: rot
+          flash2_name: blau
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l3
+          base_name: gelb
+          flash1_name: rot
+          flash2_name: blau
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l4
+          base_name: gelb
+          flash1_name: rot
+          flash2_name: blau
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l5
+          base_name: gelb
+          flash1_name: rot
+          flash2_name: blau
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l6
+          base_name: gelb
+          flash1_name: rot
+          flash2_name: blau
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l7
+          base_name: gelb
+          flash1_name: rot
+          flash2_name: blau
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l8
+          base_name: gelb
+          flash1_name: rot
+          flash2_name: blau
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l9
+          base_name: gelb
+          flash1_name: rot
+          flash2_name: blau
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l10
+          base_name: gelb
+          flash1_name: rot
+          flash2_name: blau
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l11
+          base_name: gelb
+          flash1_name: rot
+          flash2_name: blau
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l12
+          base_name: gelb
+          flash1_name: rot
+          flash2_name: blau
+
+alt_theater_streit_phase_5_v2:
+  alias: 'Theater: Streit P5 (Blau + Gelb/Rot)'
+  icon: mdi:circle
+  mode: restart
+  sequence:
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.theater_master_stop_skip
+    data:
+      value: script.alt_theater_streit_phase_5_v2
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_master_stop_v2
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      rgb_color: '{{ (states(''input_text.theater_farbe_blau'') if '','' in states(''input_text.theater_farbe_blau'')
+        else ''0,150,255'').split('','') | map(''int'') | list }}'
+      brightness_pct: 50
+      transition: 0
+  - delay:
+      milliseconds: 300
+  - parallel:
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l1
+          base_name: blau
+          flash1_name: gelb
+          flash2_name: rot
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l2
+          base_name: blau
+          flash1_name: gelb
+          flash2_name: rot
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l3
+          base_name: blau
+          flash1_name: gelb
+          flash2_name: rot
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l4
+          base_name: blau
+          flash1_name: gelb
+          flash2_name: rot
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l5
+          base_name: blau
+          flash1_name: gelb
+          flash2_name: rot
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l6
+          base_name: blau
+          flash1_name: gelb
+          flash2_name: rot
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l7
+          base_name: blau
+          flash1_name: gelb
+          flash2_name: rot
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l8
+          base_name: blau
+          flash1_name: gelb
+          flash2_name: rot
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l9
+          base_name: blau
+          flash1_name: gelb
+          flash2_name: rot
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l10
+          base_name: blau
+          flash1_name: gelb
+          flash2_name: rot
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l11
+          base_name: blau
+          flash1_name: gelb
+          flash2_name: rot
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l12
+          base_name: blau
+          flash1_name: gelb
+          flash2_name: rot
+
+alt_theater_streit_phase_6_v2:
+  alias: 'Theater: Streit P6 (Rot + Gelb/Blau)'
+  icon: mdi:circle
+  mode: restart
+  sequence:
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.theater_master_stop_skip
+    data:
+      value: script.alt_theater_streit_phase_6_v2
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_master_stop_v2
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      rgb_color: '{{ (states(''input_text.theater_farbe_rot'') if '','' in states(''input_text.theater_farbe_rot'')
+        else ''255,0,0'').split('','') | map(''int'') | list }}'
+      brightness_pct: 50
+      transition: 0
+  - delay:
+      milliseconds: 300
+  - parallel:
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l1
+          base_name: rot
+          flash1_name: gelb
+          flash2_name: blau
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l2
+          base_name: rot
+          flash1_name: gelb
+          flash2_name: blau
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l3
+          base_name: rot
+          flash1_name: gelb
+          flash2_name: blau
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l4
+          base_name: rot
+          flash1_name: gelb
+          flash2_name: blau
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l5
+          base_name: rot
+          flash1_name: gelb
+          flash2_name: blau
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l6
+          base_name: rot
+          flash1_name: gelb
+          flash2_name: blau
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l7
+          base_name: rot
+          flash1_name: gelb
+          flash2_name: blau
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l8
+          base_name: rot
+          flash1_name: gelb
+          flash2_name: blau
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l9
+          base_name: rot
+          flash1_name: gelb
+          flash2_name: blau
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l10
+          base_name: rot
+          flash1_name: gelb
+          flash2_name: blau
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l11
+          base_name: rot
+          flash1_name: gelb
+          flash2_name: blau
+    - action: script.turn_on
+      target:
+        entity_id: script.alt_theater_streit_flash_helper_v2
+      data:
+        variables:
+          lamp: light.l12
+          base_name: rot
+          flash1_name: gelb
+          flash2_name: blau
+
+alt_theater_master_stop_v2:
+  alias: 'Theater: Master Stop v2'
+  icon: mdi:stop
+  mode: restart
+  sequence:
+  - variables:
+      skip: '{{ states(''input_text.theater_master_stop_skip'') }}'
+  - repeat:
+      for_each:
+      - script.alt_theater_neutral_v2
+      - script.alt_theater_blau_v2
+      - script.alt_theater_rot_v2
+      - script.alt_theater_gelb_v2
+      - script.alt_theater_giftgelb_v2
+      - script.alt_theater_grau_v2
+      - script.alt_theater_streit_lauf_v2
+      - script.alt_theater_streit_p7_v2
+      - script.alt_theater_streit_phase_1_v2
+      - script.alt_theater_streit_phase_2_v2
+      - script.alt_theater_streit_phase_3_v2
+      - script.alt_theater_streit_phase_4_v2
+      - script.alt_theater_streit_phase_5_v2
+      - script.alt_theater_streit_phase_6_v2
+      - script.alt_theater_finale_regenbogen
+      - script.alt_theater_finale_helper_v2
+      - script.alt_theater_streit_flash_helper_v2
+      - script.alt_theater_streit_chaos_helper_v2
+      - script.alt_theater_regen_v2
+      - script.alt_theater_tranen_v2
+      - script.alt_theater_tranen_helper_v2
+      sequence:
+      - condition: template
+        value_template: '{{ repeat.item != skip }}'
+      - action: script.turn_off
+        target:
+          entity_id: '{{ repeat.item }}'
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.theater_master_stop_skip
+    data:
+      value: ''
+
+alt_theater_blackout_v2:
+  alias: 'Theater: Blackout'
+  icon: mdi:lightbulb-off
+  mode: restart
+  sequence:
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.theater_master_stop_skip
+    data:
+      value: ''
+  - action: script.alt_theater_master_stop_v2
+  - action: light.turn_off
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+
+alt_theater_finale_helper_v2:
+  alias: 'Theater: Finale Helper'
+  icon: mdi:palette
+  mode: parallel
+  max: 12
+  fields:
+    lamp:
+      description: Lampen-Entity-ID
+    start_hue:
+      description: Start-Farbton (0-359)
+  sequence:
+  - variables:
+      start_time: '{{ now().timestamp() }}'
+  - repeat:
+      while:
+      - condition: template
+        value_template: 'true'
+      sequence:
+      - variables:
+          s: '{{ states(''input_number.theater_master_speed'') | float(50) }}'
+          cycle_sec: '{{ [6, 60 - s * 0.54] | max | round(1) }}'
+          step_sec: '{{ [0.3, cycle_sec / 60] | max | round(2) }}'
+          elapsed: '{{ now().timestamp() - start_time }}'
+          hue: '{{ ((start_hue | float + (elapsed / cycle_sec * 360)) % 360) | round(1)
+            }}'
+          br: '{{ [(states(''input_number.theater_master_brightness'') | float(500)
+            / 10) | int, 100] | min }}'
+      - action: light.turn_on
+        target:
+          entity_id: '{{ lamp }}'
+        data:
+          hs_color:
+          - '{{ hue }}'
+          - 100
+          brightness_pct: '{{ br }}'
+          transition: '{{ step_sec }}'
+      - delay: '{{ step_sec }}'
+
+alt_theater_finale_regenbogen:
+  alias: 'Theater: Finale'
+  icon: mdi:rainbow
+  mode: restart
+  sequence:
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.theater_master_stop_skip
+    data:
+      value: script.alt_theater_finale_regenbogen
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_master_stop_v2
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_finale_helper_v2
+    data:
+      variables:
+        lamp: light.l1
+        start_hue: 0
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_finale_helper_v2
+    data:
+      variables:
+        lamp: light.l2
+        start_hue: 30
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_finale_helper_v2
+    data:
+      variables:
+        lamp: light.l3
+        start_hue: 60
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_finale_helper_v2
+    data:
+      variables:
+        lamp: light.l4
+        start_hue: 90
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_finale_helper_v2
+    data:
+      variables:
+        lamp: light.l5
+        start_hue: 120
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_finale_helper_v2
+    data:
+      variables:
+        lamp: light.l6
+        start_hue: 150
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_finale_helper_v2
+    data:
+      variables:
+        lamp: light.l7
+        start_hue: 180
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_finale_helper_v2
+    data:
+      variables:
+        lamp: light.l8
+        start_hue: 210
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_finale_helper_v2
+    data:
+      variables:
+        lamp: light.l9
+        start_hue: 240
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_finale_helper_v2
+    data:
+      variables:
+        lamp: light.l10
+        start_hue: 270
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_finale_helper_v2
+    data:
+      variables:
+        lamp: light.l11
+        start_hue: 300
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_finale_helper_v2
+    data:
+      variables:
+        lamp: light.l12
+        start_hue: 330
+
+alt_theater_regen_v2:
+  alias: 'Theater: Regen v2'
+  icon: mdi:weather-pouring
+  mode: restart
+  description: 'Regentropfen-Effekt. Phase 1 (~15s): einzelne Tropfen in rot/blau/gelb
+    (nie gleiche Farbe oder Lampe direkt hintereinander). Phase 2 (endlos): mehrere
+    ueberlappende Tropfen in 12 Regenbogenfarben. Tempo ueber input_number.theater_master_speed;
+    Helligkeit des Tropfens selbst ist fix.'
+  sequence:
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.theater_master_stop_skip
+    data:
+      value: script.alt_theater_regen_v2
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_master_stop_v2
+  - action: light.turn_off
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.theater_regen_last_color
+    data:
+      value: '99'
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.theater_regen_last_lamp
+    data:
+      value: '0'
+  - variables:
+      start_time: '{{ now().timestamp() }}'
+  - repeat:
+      while:
+      - condition: template
+        value_template: 'true'
+      sequence:
+      - variables:
+          s: '{{ states(''input_number.theater_master_speed'') | float(50) }}'
+          base_delay_ms: '{% if s <= 25 %}{{ (3000 - s * 60) | int }}{% else %}{{
+            [(1400 - (s - 25) * 17) | int, 120] | max | int }}{% endif %}'
+          jitter_ms: '{{ range(0, (base_delay_ms // 3) + 1) | random }}'
+          total_delay_ms: '{{ base_delay_ms + jitter_ms }}'
+          last_color_idx: '{{ states(''input_text.theater_regen_last_color'') | int(99)
+            }}'
+          last_lamp_num: '{{ states(''input_text.theater_regen_last_lamp'') | int(0)
+            }}'
+          new_color_idx: '{% if s <= 25 %}{% if last_color_idx >= 3 %}{{ range(3)
+            | random }}{% else %}{% set offset = [1, 2] | random %}{{ (last_color_idx
+            + offset) % 3 }}{% endif %}{% else %}{% set c = range(12) | random %}{{
+            c if c != (last_color_idx | int) else (c + 1) % 12 }}{% endif %}'
+          new_lamp_num: '{% if last_lamp_num < 1 or last_lamp_num > 12 %}{{ range(1,
+            13) | random }}{% else %}{% set offset = range(1, 12) | random %}{{ ((last_lamp_num
+            - 1 + offset) % 12) + 1 }}{% endif %}'
+          rainbow_palette: '{{ [[255,0,0],[255,128,0],[255,255,0],[128,255,0],[0,255,0],[0,255,128],[0,255,255],[0,128,255],[0,0,255],[128,0,255],[255,0,255],[255,0,128]]
+            }}'
+          drop_rgb: '{% if s <= 25 %} {% set cg = states(''input_text.theater_farbe_gelb'')
+            %}{% set cg = cg if '','' in cg else ''255,126,13'' %} {% set cb = states(''input_text.theater_farbe_blau'')
+            %}{% set cb = cb if '','' in cb else ''0,150,255'' %} {% set cr = states(''input_text.theater_farbe_rot'')
+            %}{% set cr = cr if '','' in cr else ''255,0,0'' %} {% if new_color_idx
+            | int == 0 %}{{ cg.split('','') | map(''int'') | list }}{% elif new_color_idx
+            | int == 1 %}{{ cb.split('','') | map(''int'') | list }}{% else %}{{ cr.split('','')
+            | map(''int'') | list }}{% endif %} {% else %}{{ rainbow_palette[new_color_idx
+            | int] }}{% endif %}'
+          new_lamp: light.l{{ new_lamp_num }}
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.theater_regen_last_color
+        data:
+          value: '{{ new_color_idx }}'
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.theater_regen_last_lamp
+        data:
+          value: '{{ new_lamp_num }}'
+      - action: script.alt_einzeltropfen
+        data:
+          target_light: '{{ new_lamp }}'
+          drop_color: '{{ drop_rgb }}'
+      - delay:
+          milliseconds: '{{ total_delay_ms }}'
+
+alt_theater_tranen_helper_v2:
+  mode: parallel
+  max: 12
+  fields:
+    lamp:
+      description: Lampen-Entity-ID
+    hue:
+      description: Farbton (0-359)
+  sequence:
+  - action: light.turn_on
+    target:
+      entity_id: '{{ lamp }}'
+    data:
+      hs_color:
+      - '{{ hue }}'
+      - 100
+      brightness_pct: 100
+      transition: 0.1
+  - delay: '0:00:01.1'
+  - action: light.turn_off
+    target:
+      entity_id: '{{ lamp }}'
+    data:
+      transition: 3
+  - delay: 0:00:03
+alt_theater_tranen_v2:
+  alias: 'Theater: Tränen'
+  icon: mdi:water-drop
+  mode: restart
+  sequence:
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.theater_master_stop_skip
+    data:
+      value: script.alt_theater_tranen_v2
+  - action: script.alt_theater_master_stop_v2
+  - variables:
+      drop_colors:
+      - 0
+      - 240
+      - 60
+      - 300
+      - 120
+      - 180
+      - 30
+      - 270
+      - 90
+      - 210
+      - 150
+      - 330
+      drop_idx: 0
+      last_lamp: 0
+  - repeat:
+      while:
+      - condition: template
+        value_template: 'true'
+      sequence:
+      - variables:
+          s: '{{ states(''input_number.theater_master_speed'') | float(50) }}'
+          hue: '{{ drop_colors[drop_idx % 12] }}'
+          delay_sec: '{{ [0.2, 8.2 - s * 0.082] | max | round(2) }}'
+          lamp_num: '{{ range(1, 13) | list | shuffle | reject(''equalto'', last_lamp
+            | int) | first }}'
+      - variables:
+          drop_idx: '{{ drop_idx + 1 }}'
+          last_lamp: '{{ lamp_num }}'
+      - action: script.turn_on
+        target:
+          entity_id: script.alt_theater_tranen_helper_v2
+        data:
+          variables:
+            lamp: "light.l{{ lamp_num }}"
+            hue: '{{ hue }}'
+      - delay: '{{ delay_sec }}'
+alt_theater_streit_start:
+  alias: 'Theater: Streit Start'
+  icon: mdi:play-circle
+  mode: restart
+  sequence:
+  - action: script.alt_theater_master_stop_v2
+  - action: script.turn_on
+    target:
+      entity_id: script.alt_theater_streit_phase_1_v2
+alt_theater_streit_next:
+  alias: 'Theater: Streit Weiter'
+  icon: mdi:skip-next
+  mode: restart
+  sequence:
+  - variables:
+      current_phase: '{{ ''3'' if is_state(''script.alt_theater_streit_phase_3_v2'',
+        ''on'') else ''2'' if is_state(''script.alt_theater_streit_phase_2_v2'', ''on'')
+        else ''1'' }}'
+  - variables:
+      next_phase: '{{ [current_phase | int + 1, 3] | min }}'
+  - action: script.alt_theater_master_stop_v2
+  - action: script.turn_on
+    target:
+      entity_id: "script.alt_theater_streit_phase_{{ next_phase }}_v2"
+alt_theater_streit_prev:
+  alias: 'Theater: Streit Zurück'
+  icon: mdi:skip-previous
+  mode: restart
+  sequence:
+  - variables:
+      current_phase: '{{ ''1'' if is_state(''script.alt_theater_streit_phase_1_v2'',
+        ''on'') else ''2'' if is_state(''script.alt_theater_streit_phase_2_v2'', ''on'')
+        else ''3'' }}'
+  - variables:
+      prev_phase: '{{ [current_phase | int - 1, 1] | max }}'
+  - action: script.alt_theater_master_stop_v2
+  - action: script.turn_on
+    target:
+      entity_id: "script.alt_theater_streit_phase_{{ prev_phase }}_v2"
+alt_theater_fade_to_black_v2:
+  alias: 'Theater: Fade to Black'
+  icon: mdi:weather-night
+  mode: restart
+  sequence:
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.theater_master_stop_skip
+    data:
+      value: script.alt_theater_fade_to_black_v2
+  - action: script.alt_theater_master_stop_v2
+  - action: light.turn_off
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      transition: 5
+  - delay: 0:00:05
+alt_theater_blackout_screen:
+  alias: 'Beamer: Blackout Screen (F1)'
+  icon: mdi:monitor-off
+  mode: single
+  sequence:
+  - action: shell_command.beamer_keyevent_f1
+alt_beamer_f1:
+  alias: 'Beamer: F1 richtig(Bild schwarz)'
+  description: F1, dann Vol-Up/Vol-Down — weckt die Fernbedienung wieder auf.
+  icon: mdi:keyboard-f1
+  mode: single
+  sequence:
+  - action: remote.send_command
+    target:
+      entity_id: remote.xgimi_horizon
+    data:
+      command: F1
+  - delay: 00:00:01
+  - action: remote.send_command
+    target:
+      entity_id: remote.xgimi_horizon
+    data:
+      command: VOLUME_UP
+  - action: remote.send_command
+    target:
+      entity_id: remote.xgimi_horizon
+    data:
+      command: VOLUME_DOWN
+alt_beamer_lauter:
+  alias: 'Beamer: Lauter'
+  icon: mdi:volume-plus
+  mode: single
+  sequence:
+  - action: shell_command.beamer_keyevent_vol_up
+alt_beamer_leiser:
+  alias: 'Beamer: Leiser'
+  icon: mdi:volume-minus
+  mode: single
+  sequence:
+  - action: shell_command.beamer_keyevent_vol_down

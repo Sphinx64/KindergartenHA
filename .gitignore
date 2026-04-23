@@ -1,0 +1,42 @@
+# --- Home Assistant: Laufzeit & private Daten ---
+home-assistant_v2.db
+home-assistant_v2.db-shm
+home-assistant_v2.db-wal
+*.log
+*.log.*
+home-assistant.log*
+home-assistant-rollback.log
+OZW_Log.txt
+ip_bans.yaml
+secrets.yaml
+
+# Zustand & Caches (nicht versionieren; ein Muster ersetzt tausend Einzeldteile)
+.storage/
+.cloud/
+.google.token
+.deps/
+.cache/
+
+# HACS & Custom Integrations lokal (über HACS nachinstallieren, nicht im Repo)
+custom_components/
+
+# Python-Caches
+**/__pycache__/
+*.py[cod]
+*.pyo
+
+# Medien / große Binärdateien (ehemals einzeln aufgelistet)
+www/musik/
+
+# Sonst
+*.tmp
+~*
+.DS_Store
+Thumbs.db
+.ha_run.lock
+.claude/
+
+# Optional: lokal / Hilfsskript-Logs
+_merge_theater_log.txt
+_ran_ok.txt
+_git_*.txt

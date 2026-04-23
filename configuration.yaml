@@ -1,0 +1,166 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+logger:
+  default: info
+  logs:
+    homeassistant.components.script: debug
+    homeassistant.components.mqtt: info
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+browser_mod:
+
+# Optional: exakten Android-Keyevent 2099 (XGIMI) senden – nur wenn „adb" auf dem
+# HA-Host funktioniert und der Beamer per USB-Debugging/Netzwerk erreichbar ist.
+# Befehl bei Bedarf anpassen (z. B. adb connect IP:5555 && …).
+shell_command:
+  beamer_keyevent_2099: "adb shell input keyevent 2099"
+  beamer_keyevent_f1: "adb shell input keyevent 131"
+  beamer_keyevent_vol_up: "adb shell input keyevent 24"
+  beamer_keyevent_vol_down: "adb shell input keyevent 25"
+
+group:
+  theater_al:
+    name: "Theater AL (links außen)"
+    entities:
+      - light.l1
+      - light.l5
+      - light.l9
+  theater_ml:
+    name: "Theater ML (mitte links)"
+    entities:
+      - light.l2
+      - light.l6
+      - light.l10
+  theater_mr:
+    name: "Theater MR (mitte rechts)"
+    entities:
+      - light.l3
+      - light.l7
+      - light.l11
+  theater_ar:
+    name: "Theater AR (rechts außen)"
+    entities:
+      - light.l4
+      - light.l8
+      - light.l12
+
+input_number:
+  # --- überschrieben mit v2-Skala (scripts rechnen mit /10) ---
+  theater_master_brightness:
+    name: Master Helligkeit
+    min: 0
+    max: 1000
+    step: 10
+    initial: 500
+    mode: slider
+
+  theater_master_speed:
+    name: Master Speed
+    min: 0
+    max: 100
+    step: 1
+    initial: 50
+    mode: slider
+
+  theater_streit_phase:
+    name: Streit-Phase
+    min: 1
+    max: 8
+    step: 1
+    initial: 1
+    mode: slider
+
+  # --- Alt-Helper, bleiben drin (falls noch irgendwo referenziert) ---
+  theater_current_speed:
+    name: "Aktuelle Geschwindigkeit (Intern / Dämpfung)v2"
+    min: 0
+    max: 100
+    step: 1
+    unit_of_measurement: "%"
+    icon: mdi:speedometer-medium
+
+  theater_tranen_prev_lamp:
+    name: "Theater Tränen (intern: letzte Lampe 0–11)"
+    min: 0
+    max: 11
+    step: 1
+    mode: box
+
+  theater_finale_hue_base:
+    name: "Theater Finale (intern: Farbdrehung 0–360°)"
+    min: 0
+    max: 360
+    step: 1
+    initial: 0
+    unit_of_measurement: "°"
+    mode: box
+
+input_text:
+  # --- Grundfarben (alt + neu ergänzt) ---
+  theater_farbe_gelb:
+    name: Farbe Gelb (R,G,B)
+    initial: "255,126,13"
+    max: 20
+
+  theater_farbe_blau:
+    name: Farbe Blau (R,G,B)
+    initial: "0,150,255"
+    max: 20
+
+  theater_farbe_rot:
+    name: Farbe Rot (R,G,B)
+    initial: "255,0,0"
+    max: 20
+
+  theater_farbe_neutral:
+    name: Farbe Neutral (R,G,B)
+    initial: "255,255,255"
+    max: 20
+
+  theater_farbe_grau:
+    name: Farbe Grau (R,G,B)
+    initial: "252,237,252"
+    max: 20
+
+  theater_farbe_giftgelb:
+    name: Farbe Giftgelb (R,G,B)
+    initial: "180,255,0"
+    max: 20
+
+  # --- Interne Helper für v2-Scripts ---
+  theater_master_stop_skip:
+    name: Master-Stop-Skip
+    initial: ""
+    max: 100
+
+  theater_regen_last_color:
+    name: Regen Last Color Index
+    initial: "99"
+    max: 5
+
+  theater_regen_last_lamp:
+    name: Regen Last Lamp Number
+    initial: "0"
+    max: 5
+
+  theater_streit_last_lamp:
+    name: Streit Lauf letzte Lampe (1–12)
+    initial: "0"
+    max: 5
+
+# Zusätzliches Lovelace-Dashboard (Standard-Dashboard bleibt in der UI)
+lovelace:
+  dashboards:
+    alle-skripte:
+      mode: yaml
+      title: Alle Skripte
+      icon: mdi:script-text-outline
+      show_in_sidebar: true
+      filename: dashboards/alle_skripte.yaml

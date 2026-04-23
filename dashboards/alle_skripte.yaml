@@ -1,0 +1,124 @@
+# Alle script.alt_*-Skripte auf einem Bildschirm gruppiert
+title: Alle Skripte
+views:
+  - path: skripte
+    title: Skripte
+    icon: mdi:script-text-outline
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: |
+              ## Tropfen & Basisfarben
+          - type: entities
+            show_header_toggle: false
+            state_color: true
+            entities:
+              - entity: script.alt_einzeltropfen
+                name: Einzeltropfen
+              - entity: script.alt_theater_neutral_v2
+                name: Neutral
+              - entity: script.alt_theater_blau_v2
+                name: Blau
+              - entity: script.alt_theater_rot_v2
+                name: Rot
+              - entity: script.alt_theater_gelb_v2
+                name: Gelb
+              - entity: script.alt_theater_giftgelb_v2
+                name: Giftgelb
+              - entity: script.alt_theater_grau_v2
+                name: Grau
+          - type: markdown
+            content: |
+              ## Global
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: script.alt_theater_master_stop_v2
+                name: Master Stop
+              - entity: script.alt_theater_blackout_v2
+                name: Blackout
+              - entity: script.alt_theater_fade_to_black_v2
+                name: Fade to Black
+          - type: markdown
+            content: |
+              ## Finale & große Effekte
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: script.alt_theater_finale_regenbogen
+                name: Finale (Regenbogen)
+              - entity: script.alt_theater_regen_v2
+                name: Regen
+              - entity: script.alt_theater_tranen_v2
+                name: Tränen
+          - type: markdown
+            content: |
+              ## Helper (typisch indirekt genutzt)
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: script.alt_theater_tranen_helper_v2
+                name: Tränen Helper
+              - entity: script.alt_theater_finale_helper_v2
+                name: Finale Helper
+          - type: markdown
+            content: |
+              ## Streit – Ablauf
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: script.alt_theater_streit_lauf_v2
+                name: Streit Lauf
+              - entity: script.alt_theater_streit_p7_v2
+                name: Streit P7
+              - entity: script.alt_theater_streit_naechste_phase_v2
+                name: Nächste Phase
+              - entity: script.alt_theater_streit_start
+                name: Streit Start
+              - entity: script.alt_theater_streit_next
+                name: Streit Weiter
+              - entity: script.alt_theater_streit_prev
+                name: Streit Zurück
+          - type: markdown
+            content: |
+              ## Streit – Phasen 1–6
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: script.alt_theater_streit_phase_1_v2
+                name: Phase 1
+              - entity: script.alt_theater_streit_phase_2_v2
+                name: Phase 2
+              - entity: script.alt_theater_streit_phase_3_v2
+                name: Phase 3
+              - entity: script.alt_theater_streit_phase_4_v2
+                name: Phase 4
+              - entity: script.alt_theater_streit_phase_5_v2
+                name: Phase 5
+              - entity: script.alt_theater_streit_phase_6_v2
+                name: Phase 6
+          - type: markdown
+            content: |
+              ## Streit – Flash & Chaos
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: script.alt_theater_streit_flash_helper_v2
+                name: Flash Helper
+              - entity: script.alt_theater_streit_chaos_helper_v2
+                name: Chaos Helper
+          - type: markdown
+            content: |
+              ## Beamer
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: script.alt_theater_blackout_screen
+                name: Blackout Screen (F1)
+              - entity: script.alt_beamer_f1
+                name: F1
+              - entity: script.alt_beamer_lauter
+                name: Lauter
+              - entity: script.alt_beamer_leiser
+                name: Leiser

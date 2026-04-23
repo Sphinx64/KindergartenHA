@@ -1,0 +1,103 @@
+🎭 Projekt-Kontext: Theater-Lichtregie "Malwida"
+
+Dieses Dokument dient als technische Referenz für die Programmierung von Home Assistant Skripten und Dashboards.
+
+1. System-Umgebung
+
+Plattform: Home Assistant OS auf einem Raspberry Pi (LAN-Anschluss).
+
+Integration: Local Tuya (lokale Steuerung der LEDs ohne Cloud-Latenz).
+
+Hardware: 12x LEDVANCE SMART+ Wi-Fi Lampen.
+
+Entitäts-IDs: light.l1 bis light.l12.
+
+2. Physisches Layout (3x4 Raster)
+
+Spalte 1 (Links)Spalte 2 (Mitte-L)Spalte 3 (Mitte-R)Spalte 4 (Rechts)ReiheL1L2L3L4
+
+Front (Zuschauer) 
+
+L5L6L7L8
+
+Mitte 
+
+L9L10L11L12
+
+Hinten (Regie) 
+
+3. Globale Steuerungs-Variablen (Helper)
+
+
+
+input_number.theater_master_brightness: Steuert die Helligkeit (0-100%). 
+
+
+
+input_number.theater_master_speed: Steuert die Effekt-Geschwindigkeit. 
+
+Wichtig: Alle Skripte müssen diese Werte dynamisch einbeziehen.
+
+4. Das Skript & Szenen-Logik
+
+Jede Szene wird durch die Handlung "Schreibt" (auf iPad oder Paket) ausgelöst. 
+
+SzeneLicht-LogikDynamik / BewegungLangeweileWarmweiß (Neutral) 
+
+Statisch, gedimmt.BlauHelles Blau 
+
+
+
+Transition: Startet links (l1, l5, l9) und wandert nach rechts. 
+
+RotTiefes, sattes Rot 
+
+
+
+Transition: Plötzlicher Wechsel von rechts (l4, l8, l12), schneller als Blau. 
+
+GelbGold-Gelb (kein Grün) 
+
+Gleichmäßiger, langsamer Übergang. 
+
+GrauKaltes Grau (Lila-Stich) 
+
+Sofortiger Wechsel, "schmutziger" Look. 
+
+StreitChaos-Blitze 
+
+
+
+Phasen: 1 (Gelb zickig) $\to$ 2 (Blau Blitz) $\to$ 3 (Rot Blitz) $\to$ 4 (Total-Chaos). 
+
+TränenSequentielles Aufleuchten 
+
+
+
+Phase 1: Erst alle Blau, dann alle Rot, dann alle Gelb. 
+
+ErwachenZufalls-Farben 
+
+
+
+Phase 2: Jede Lampe wählt eine komplett zufällige Farbe (Chaos). 
+
+FinaleRegenbogen-Fade 
+
+Jede Lampe startet bei einer anderen Farbe; fast nicht wahrnehmbarer Fade. 
+
+5. Programmier-Richtlinien (Coding Rules)
+
+Flacker-Schutz: Wi-Fi Lampen nicht mit zu vielen Befehlen fluten. Weiche Übergänge nutzen. 
+
+
+
+Dashboard: Buttons nutzen tap_action: perform-action und rufen direkt Skripte auf (keine Pop-ups). 
+
+
+
+Master-Speed: Die Geschwindigkeit von Blitzen oder Fades muss sich dem master_speed Wert in gedämpften Schritten annähern (nicht springen). 
+
+
+
+Blackout: light.turn_off für alle, stoppt alle laufenden Skript-Schleifen. 

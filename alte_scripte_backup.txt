@@ -1,0 +1,1129 @@
+﻿einzeltropfen:
+  alias: Einzeltropfen
+  mode: parallel
+  fields:
+    target_light:
+      description: Welche Lampe?
+    drop_color:
+      description: Farbe
+  sequence:
+  - target:
+      entity_id: '{{ target_light }}'
+    data:
+      rgb_color: '{{ drop_color }}'
+      brightness_pct: 100
+    action: light.turn_on
+  - delay:
+      milliseconds: 300
+  - target:
+      entity_id: '{{ target_light }}'
+    action: light.turn_off
+  description: ''
+kiga_chaos_regen_final:
+  alias: KÃ¶nigin Weint - Starkregen Final
+  mode: restart
+  sequence:
+  - action: input_number.set_value
+    target:
+      entity_id: input_number.theater_current_speed
+    data:
+      value: '{{ states(''input_number.theater_master_speed'') | float(0) }}'
+  - action: light.turn_off
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+  - parallel:
+    - sequence:
+      - repeat:
+          while: '{{ true }}'
+          sequence:
+          - variables:
+              ziel: '{{ states(''input_number.theater_master_speed'') | float(0) }}'
+              aktuell: '{{ states(''input_number.theater_current_speed'') | float(0) }}'
+              neu: "{% if ziel > aktuell %}\n  {{ [aktuell + 2, ziel] | min }}\n{%
+                elif ziel < aktuell %}\n  {{ [aktuell - 2, ziel] | max }}\n{% else
+                %}\n  {{ aktuell }}\n{% endif %}\n"
+          - action: input_number.set_value
+            target:
+              entity_id: input_number.theater_current_speed
+            data:
+              value: '{{ neu }}'
+          - delay: '00:00:00.2'
+    - sequence:
+      - repeat:
+          while: '{{ true }}'
+          sequence:
+          - variables:
+              slider_val: '{{ states(''input_number.theater_current_speed'') | float(0) }}'
+              base_delay: '{{ [4.0 - (slider_val * 0.0375), 0.25] | max }}'
+              selected_color: "{% if slider_val < 40 %}\n  {{ [[255,0,0], [255,255,0],
+                [0,0,255]] | random }}\n{% else %}\n  [ {{ range(0, 256)|random }},
+                {{ range(0, 256)|random }}, {{ range(0, 256)|random }} ]\n{% endif
+                %}\n"
+              selected_light: "{% set all = ['light.l1','light.l2','light.l3','light.l4','light.l5','light.l6','light.l7','light.l8','light.l9','light.l10','light.l11','light.l12'] %}{% if slider_val < 20 %}{{ all[(repeat.index - 1) % 12] }}{% else %}{% set free = all | select('is_state', 'off') | list %}{{ (free if free | count > 0 else all) | random }}{% endif %}"
+          - if:
+            - condition: template
+              value_template: '{{ selected_light != ''none'' }}'
+            then:
+            - action: script.turn_on
+              target:
+                entity_id: script.einzeltropfen
+              data:
+                variables:
+                  target_light: '{{ selected_light }}'
+                  drop_color: '{{ selected_color }}'
+          - delay:
+              seconds: '{{ base_delay * ((range(80, 120) | random) / 100.0) }}'
+farben_spielen:
+  alias: Farben spielen miteinander
+  mode: parallel
+  sequence:
+  - action: script.turn_off
+    target:
+      entity_id:
+      - script.szene_der_streit
+      - script.streit_einzel_loop
+      - script.szene_das_grau
+      - script.kiga_chaos_regen_final
+      - script.themen_fader
+      - script.einzeltropfen
+      - script.sanfter_fader
+  - delay: 00:00:01
+  - action: script.turn_on
+    target:
+      entity_id: script.sanfter_fader
+    data:
+      variables:
+        target_light: light.l1
+        start_hue: 0
+  - action: script.turn_on
+    target:
+      entity_id: script.sanfter_fader
+    data:
+      variables:
+        target_light: light.l2
+        start_hue: 30
+  - action: script.turn_on
+    target:
+      entity_id: script.sanfter_fader
+    data:
+      variables:
+        target_light: light.l3
+        start_hue: 60
+  - action: script.turn_on
+    target:
+      entity_id: script.sanfter_fader
+    data:
+      variables:
+        target_light: light.l4
+        start_hue: 90
+  - action: script.turn_on
+    target:
+      entity_id: script.sanfter_fader
+    data:
+      variables:
+        target_light: light.l5
+        start_hue: 120
+  - action: script.turn_on
+    target:
+      entity_id: script.sanfter_fader
+    data:
+      variables:
+        target_light: light.l6
+        start_hue: 150
+  - action: script.turn_on
+    target:
+      entity_id: script.sanfter_fader
+    data:
+      variables:
+        target_light: light.l7
+        start_hue: 180
+  - action: script.turn_on
+    target:
+      entity_id: script.sanfter_fader
+    data:
+      variables:
+        target_light: light.l8
+        start_hue: 210
+  - action: script.turn_on
+    target:
+      entity_id: script.sanfter_fader
+    data:
+      variables:
+        target_light: light.l9
+        start_hue: 240
+  - action: script.turn_on
+    target:
+      entity_id: script.sanfter_fader
+    data:
+      variables:
+        target_light: light.l10
+        start_hue: 270
+  - action: script.turn_on
+    target:
+      entity_id: script.sanfter_fader
+    data:
+      variables:
+        target_light: light.l11
+        start_hue: 300
+  - action: script.turn_on
+    target:
+      entity_id: script.sanfter_fader
+    data:
+      variables:
+        target_light: light.l12
+        start_hue: 330
+sanfter_fader:
+  alias: Sanfter Fader
+  mode: parallel
+  sequence:
+  - repeat:
+      while: '{{ true }}'
+      sequence:
+      - variables:
+          tempo_val: '{{ states(''input_number.finale_tempo'') | float(0) }}'
+          hell_val: '{{ states(''input_number.finale_helligkeit'') | int(80) }}'
+          fade_zeit: '{{ [6.0 - (tempo_val * 0.05), 1.0] | max }}'
+          r: '{{ range(0, 256) | random }}'
+          g: '{{ range(0, 256) | random }}'
+          b: '{{ range(0, 256) | random }}'
+      - action: light.turn_on
+        target:
+          entity_id: '{{ target_light }}'
+        data:
+          rgb_color:
+          - '{{ r }}'
+          - '{{ g }}'
+          - '{{ b }}'
+          brightness_pct: '{{ hell_val }}'
+          transition: '{{ fade_zeit }}'
+      - delay:
+          seconds: '{{ fade_zeit }}'
+vorstellung_beenden:
+  alias: Theater Master Stop
+  sequence:
+  - target:
+      entity_id:
+      - script.themen_fader
+      - script.sanfter_fader
+      - script.einzeltropfen
+      - script.farben_spielen
+      - script.szene_der_streit
+      - script.streit_einzel_loop
+      - script.szene_das_grau
+      - script.kiga_chaos_regen_final
+      - script.vorhang_zu_fade_to_black
+    action: script.turn_off
+  - target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      brightness_step_pct: 0
+    action: light.turn_on
+  - delay: '00:00:00.5'
+themen_fader:
+  alias: Themen Fader
+  mode: parallel
+  fields:
+    target_light:
+      description: Welche Lampe?
+    min_hue:
+      description: Min Farbwert
+    max_hue:
+      description: Max Farbwert
+    speed:
+      description: Sekunden pro Fade
+    sat:
+      description: SÃ¤ttigung (0-100)
+  sequence:
+  - repeat:
+      while: '{{ true }}'
+      sequence:
+      - target:
+          entity_id: '{{ target_light }}'
+        data:
+          hs_color:
+          - '{{ range(min_hue|int, max_hue|int + 1) | random }}'
+          - '{{ sat | default(100) }}'
+          brightness_pct: 60
+          transition: '{{ speed }}'
+        action: light.turn_on
+      - delay:
+          seconds: '{{ speed }}'
+szene_das_wilde_rot:
+  alias: 'Szene: Das wilde Rot'
+  sequence:
+  - target:
+      entity_id: script.theater_rot_v2
+    action: script.turn_on
+szene_das_sanfte_blau:
+  alias: 'Szene: Das sanfte Blau'
+  sequence:
+  - target:
+      entity_id:
+      - script.themen_fader
+      - script.sanfter_fader
+    action: script.turn_off
+  - target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      rgb_color:
+      - 255
+      - 238
+      - 193
+      brightness_pct: 60
+      transition: 1
+    action: light.turn_on
+  - delay: 00:00:01
+  - repeat:
+      for_each:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+      sequence:
+      - target:
+          entity_id: '{{ repeat.item }}'
+        data:
+          rgb_color:
+          - 0
+          - 150
+          - 255
+          brightness_pct: 50
+          transition: 2
+        action: light.turn_on
+      - delay: '00:00:01.5'
+  - repeat:
+      for_each:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+      sequence:
+      - target:
+          entity_id: script.themen_fader
+        data:
+          variables:
+            target_light: '{{ repeat.item }}'
+            min_hue: 190
+            max_hue: 195
+            speed: 30
+        action: script.turn_on
+szene_das_strahlende_gelb:
+  alias: 'Szene: Das strahlende Gelb'
+  sequence:
+  - target:
+      entity_id: script.theater_master_stop
+    action: script.turn_on
+  - delay: 00:00:01
+  - target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      rgb_color:
+      - 255
+      - 170
+      - 0
+      brightness_pct: 100
+      transition: 2
+    action: light.turn_on
+szene_neutral_langeweile:
+  alias: 'Szene: Neutral / Langeweile'
+  sequence:
+  - target:
+      entity_id: script.theater_master_stop
+    action: script.turn_on
+  - delay: 00:00:01
+  - repeat:
+      for_each:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+      sequence:
+      - action: light.turn_on
+        target:
+          entity_id: '{{ repeat.item }}'
+        data:
+          rgb_color:
+          - 255
+          - 255
+          - 255
+          brightness_pct: 50
+          transition: 2
+      - delay:
+          milliseconds: 100
+vorhang_zu_fade_to_black:
+  alias: Vorhang zu & Zimmerlicht (Final & Sauber)
+  mode: restart
+  sequence:
+  - action: script.turn_off
+    target:
+      entity_id:
+      - script.farben_spielen
+      - script.sanfter_fader
+      - script.themen_fader
+      - script.szene_der_streit
+      - script.kiga_chaos_regen_final
+      - script.einzeltropfen
+      - script.szene_das_grau
+      - script.theater_master_stop
+  - delay: '00:00:00.5'
+  - repeat:
+      count: 20
+      sequence:
+      - action: light.turn_on
+        target:
+          entity_id:
+          - light.l1
+          - light.l2
+          - light.l3
+          - light.l4
+          - light.l5
+          - light.l6
+          - light.l7
+          - light.l8
+          - light.l9
+          - light.l10
+          - light.l11
+          - light.l12
+        data:
+          brightness_pct: '{{ [100 - (repeat.index * 5), 0] | max }}'
+      - delay:
+          milliseconds: 100
+  - action: light.turn_off
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+  - delay: 00:00:20
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      rgb_color:
+      - 225
+      - 235
+      - 255
+      brightness_pct: 1
+  - repeat:
+      count: 15
+      sequence:
+      - action: light.turn_on
+        target:
+          entity_id:
+          - light.l1
+          - light.l2
+          - light.l3
+          - light.l4
+          - light.l5
+          - light.l6
+          - light.l7
+          - light.l8
+          - light.l9
+          - light.l10
+          - light.l11
+          - light.l12
+        data:
+          rgb_color:
+          - 225
+          - 235
+          - 255
+          brightness_pct: '{{ (repeat.index * 6) }}'
+      - delay:
+          milliseconds: 100
+szene_der_streit:
+  alias: 'Szene: Der Streit'
+  mode: restart
+  sequence:
+  - target:
+      entity_id:
+      - script.themen_fader
+      - script.sanfter_fader
+      - script.einzeltropfen
+      - script.streit_einzel_loop
+    action: script.turn_off
+  - target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    action: light.turn_off
+  - delay: '00:00:00.5'
+  - parallel:
+    - repeat:
+        while: '{{ true }}'
+        sequence:
+        - variables:
+            tempo: '{{ states(''input_number.streit_tempo'') | float(1.0) }}'
+            clash_color: '{{ [[255,0,0], [0,0,255], [255,220,0], [255,255,255]] |
+              random }}'
+            on_ms: '{{ (range(400, 900) | random / tempo) | int if clash_color !=
+              [255,255,255] else 80 }}'
+        - target:
+            entity_id: light.l1
+          data:
+            rgb_color: '{{ clash_color }}'
+            brightness_pct: '{{ 100 if clash_color == [255,255,255] else 70 }}'
+            transition: 0
+          action: light.turn_on
+        - delay:
+            milliseconds: '{{ on_ms }}'
+        - target:
+            entity_id: light.l1
+          action: light.turn_off
+        - delay:
+            milliseconds: '{{ (range(150, 400) | random / tempo) | int }}'
+    - repeat:
+        while: '{{ true }}'
+        sequence:
+        - variables:
+            tempo: '{{ states(''input_number.streit_tempo'') | float(1.0) }}'
+            clash_color: '{{ [[255,0,0], [0,0,255], [255,220,0], [255,255,255]] |
+              random }}'
+            on_ms: '{{ (range(400, 900) | random / tempo) | int if clash_color !=
+              [255,255,255] else 80 }}'
+        - target:
+            entity_id: light.l2
+          data:
+            rgb_color: '{{ clash_color }}'
+            brightness_pct: 70
+            transition: 0
+          action: light.turn_on
+        - delay:
+            milliseconds: '{{ on_ms }}'
+        - target:
+            entity_id: light.l2
+          action: light.turn_off
+        - delay:
+            milliseconds: '{{ (range(150, 400) | random / tempo) | int }}'
+    - repeat:
+        while: '{{ true }}'
+        sequence:
+        - variables:
+            tempo: '{{ states(''input_number.streit_tempo'') | float(1.0) }}'
+            clash_color: '{{ [[255,0,0], [0,0,255], [255,220,0], [255,255,255]] |
+              random }}'
+            on_ms: '{{ (range(400, 900) | random / tempo) | int if clash_color !=
+              [255,255,255] else 80 }}'
+        - target:
+            entity_id: light.l3
+          data:
+            rgb_color: '{{ clash_color }}'
+            brightness_pct: 70
+            transition: 0
+          action: light.turn_on
+        - delay:
+            milliseconds: '{{ on_ms }}'
+        - target:
+            entity_id: light.l3
+          action: light.turn_off
+        - delay:
+            milliseconds: '{{ (range(150, 400) | random / tempo) | int }}'
+    - repeat:
+        while: '{{ true }}'
+        sequence:
+        - variables:
+            tempo: '{{ states(''input_number.streit_tempo'') | float(1.0) }}'
+            clash_color: '{{ [[255,0,0], [0,0,255], [255,220,0], [255,255,255]] |
+              random }}'
+            on_ms: '{{ (range(400, 900) | random / tempo) | int if clash_color !=
+              [255,255,255] else 80 }}'
+        - target:
+            entity_id: light.l4
+          data:
+            rgb_color: '{{ clash_color }}'
+            brightness_pct: 70
+            transition: 0
+          action: light.turn_on
+        - delay:
+            milliseconds: '{{ on_ms }}'
+        - target:
+            entity_id: light.l4
+          action: light.turn_off
+        - delay:
+            milliseconds: '{{ (range(150, 400) | random / tempo) | int }}'
+    - repeat:
+        while: '{{ true }}'
+        sequence:
+        - variables:
+            tempo: '{{ states(''input_number.streit_tempo'') | float(1.0) }}'
+            clash_color: '{{ [[255,0,0], [0,0,255], [255,220,0], [255,255,255]] |
+              random }}'
+            on_ms: '{{ (range(400, 900) | random / tempo) | int if clash_color !=
+              [255,255,255] else 80 }}'
+        - target:
+            entity_id: light.l5
+          data:
+            rgb_color: '{{ clash_color }}'
+            brightness_pct: 70
+            transition: 0
+          action: light.turn_on
+        - delay:
+            milliseconds: '{{ on_ms }}'
+        - target:
+            entity_id: light.l5
+          action: light.turn_off
+        - delay:
+            milliseconds: '{{ (range(150, 400) | random / tempo) | int }}'
+    - repeat:
+        while: '{{ true }}'
+        sequence:
+        - variables:
+            tempo: '{{ states(''input_number.streit_tempo'') | float(1.0) }}'
+            clash_color: '{{ [[255,0,0], [0,0,255], [255,220,0], [255,255,255]] | random }}'
+            on_ms: '{{ (range(400, 900) | random / tempo) | int if clash_color != [255,255,255] else 80 }}'
+        - target:
+            entity_id: light.l6
+          data:
+            rgb_color: '{{ clash_color }}'
+            brightness_pct: 70
+            transition: 0
+          action: light.turn_on
+        - delay:
+            milliseconds: '{{ on_ms }}'
+        - target:
+            entity_id: light.l6
+          action: light.turn_off
+        - delay:
+            milliseconds: '{{ (range(150, 400) | random / tempo) | int }}'
+    - repeat:
+        while: '{{ true }}'
+        sequence:
+        - variables:
+            tempo: '{{ states(''input_number.streit_tempo'') | float(1.0) }}'
+            clash_color: '{{ [[255,0,0], [0,0,255], [255,220,0], [255,255,255]] | random }}'
+            on_ms: '{{ (range(400, 900) | random / tempo) | int if clash_color != [255,255,255] else 80 }}'
+        - target:
+            entity_id: light.l7
+          data:
+            rgb_color: '{{ clash_color }}'
+            brightness_pct: 70
+            transition: 0
+          action: light.turn_on
+        - delay:
+            milliseconds: '{{ on_ms }}'
+        - target:
+            entity_id: light.l7
+          action: light.turn_off
+        - delay:
+            milliseconds: '{{ (range(150, 400) | random / tempo) | int }}'
+    - repeat:
+        while: '{{ true }}'
+        sequence:
+        - variables:
+            tempo: '{{ states(''input_number.streit_tempo'') | float(1.0) }}'
+            clash_color: '{{ [[255,0,0], [0,0,255], [255,220,0], [255,255,255]] | random }}'
+            on_ms: '{{ (range(400, 900) | random / tempo) | int if clash_color != [255,255,255] else 80 }}'
+        - target:
+            entity_id: light.l8
+          data:
+            rgb_color: '{{ clash_color }}'
+            brightness_pct: 70
+            transition: 0
+          action: light.turn_on
+        - delay:
+            milliseconds: '{{ on_ms }}'
+        - target:
+            entity_id: light.l8
+          action: light.turn_off
+        - delay:
+            milliseconds: '{{ (range(150, 400) | random / tempo) | int }}'
+    - repeat:
+        while: '{{ true }}'
+        sequence:
+        - variables:
+            tempo: '{{ states(''input_number.streit_tempo'') | float(1.0) }}'
+            clash_color: '{{ [[255,0,0], [0,0,255], [255,220,0], [255,255,255]] | random }}'
+            on_ms: '{{ (range(400, 900) | random / tempo) | int if clash_color != [255,255,255] else 80 }}'
+        - target:
+            entity_id: light.l9
+          data:
+            rgb_color: '{{ clash_color }}'
+            brightness_pct: 70
+            transition: 0
+          action: light.turn_on
+        - delay:
+            milliseconds: '{{ on_ms }}'
+        - target:
+            entity_id: light.l9
+          action: light.turn_off
+        - delay:
+            milliseconds: '{{ (range(150, 400) | random / tempo) | int }}'
+    - repeat:
+        while: '{{ true }}'
+        sequence:
+        - variables:
+            tempo: '{{ states(''input_number.streit_tempo'') | float(1.0) }}'
+            clash_color: '{{ [[255,0,0], [0,0,255], [255,220,0], [255,255,255]] | random }}'
+            on_ms: '{{ (range(400, 900) | random / tempo) | int if clash_color != [255,255,255] else 80 }}'
+        - target:
+            entity_id: light.l10
+          data:
+            rgb_color: '{{ clash_color }}'
+            brightness_pct: 70
+            transition: 0
+          action: light.turn_on
+        - delay:
+            milliseconds: '{{ on_ms }}'
+        - target:
+            entity_id: light.l10
+          action: light.turn_off
+        - delay:
+            milliseconds: '{{ (range(150, 400) | random / tempo) | int }}'
+    - repeat:
+        while: '{{ true }}'
+        sequence:
+        - variables:
+            tempo: '{{ states(''input_number.streit_tempo'') | float(1.0) }}'
+            clash_color: '{{ [[255,0,0], [0,0,255], [255,220,0], [255,255,255]] | random }}'
+            on_ms: '{{ (range(400, 900) | random / tempo) | int if clash_color != [255,255,255] else 80 }}'
+        - target:
+            entity_id: light.l11
+          data:
+            rgb_color: '{{ clash_color }}'
+            brightness_pct: 70
+            transition: 0
+          action: light.turn_on
+        - delay:
+            milliseconds: '{{ on_ms }}'
+        - target:
+            entity_id: light.l11
+          action: light.turn_off
+        - delay:
+            milliseconds: '{{ (range(150, 400) | random / tempo) | int }}'
+    - repeat:
+        while: '{{ true }}'
+        sequence:
+        - variables:
+            tempo: '{{ states(''input_number.streit_tempo'') | float(1.0) }}'
+            clash_color: '{{ [[255,0,0], [0,0,255], [255,220,0], [255,255,255]] | random }}'
+            on_ms: '{{ (range(400, 900) | random / tempo) | int if clash_color != [255,255,255] else 80 }}'
+        - target:
+            entity_id: light.l12
+          data:
+            rgb_color: '{{ clash_color }}'
+            brightness_pct: 70
+            transition: 0
+          action: light.turn_on
+        - delay:
+            milliseconds: '{{ on_ms }}'
+        - target:
+            entity_id: light.l12
+          action: light.turn_off
+        - delay:
+            milliseconds: '{{ (range(150, 400) | random / tempo) | int }}'
+szene_das_grau:
+  alias: 'Szene: Das Grau'
+  mode: restart
+  sequence:
+  - target:
+      entity_id:
+      - script.szene_der_streit
+      - script.themen_fader
+    action: script.turn_off
+    data: {}
+  - target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    action: light.turn_off
+  - delay: '00:00:00.8'
+  - target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      rgb_color:
+      - 110
+      - 100
+      - 130
+      brightness_pct: 15
+      transition: 2
+    action: light.turn_on
+  - repeat:
+      while:
+      - condition: template
+        value_template: '{{ true }}'
+      sequence:
+      - action: light.turn_on
+        target:
+          entity_id:
+          - light.l1
+          - light.l2
+          - light.l3
+          - light.l4
+          - light.l5
+          - light.l6
+          - light.l7
+          - light.l8
+          - light.l9
+          - light.l10
+          - light.l11
+          - light.l12
+        data:
+          rgb_color:
+          - 100
+          - 115
+          - 90
+          brightness_pct: 10
+          transition: 8
+      - delay: 00:00:08
+      - action: light.turn_on
+        target:
+          entity_id:
+          - light.l1
+          - light.l2
+          - light.l3
+          - light.l4
+          - light.l5
+          - light.l6
+          - light.l7
+          - light.l8
+          - light.l9
+          - light.l10
+          - light.l11
+          - light.l12
+        data:
+          rgb_color:
+          - 110
+          - 100
+          - 130
+          brightness_pct: 15
+          transition: 10
+      - delay: 00:00:10
+  description: ''
+musik_master_player:
+  alias: Musik Master Player
+  mode: restart
+  sequence:
+  - target:
+      entity_id: media_player.DEIN_LAUTSPRECHER
+    data:
+      volume_level: 0.6
+    action: media_player.volume_set
+  - target:
+      entity_id: media_player.DEIN_LAUTSPRECHER
+    data:
+      media_content_id: media-source://media_source/local/{{ lied_datei }}
+      media_content_type: music
+    action: media_player.play_media
+szene_blackout_alles_sofort_dunkel:
+  alias: 'Szene: Blackout (Alles sofort dunkel)'
+  mode: restart
+  sequence:
+  - action: script.turn_off
+    target:
+      entity_id:
+      - script.themen_fader
+      - script.sanfter_fader
+      - script.einzeltropfen
+      - script.kiga_chaos_regen_final
+      - script.farben_spielen
+  - action: light.turn_off
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+    data:
+      transition: 0
+  description: ''
+streit_nachste_phase:
+  alias: 'Streit: NÃ¤chste Phase'
+  sequence:
+  - target:
+      entity_id: input_select.theater_phase
+    action: input_select.select_next
+  description: ''
+theater_effekt_loop:
+  alias: 'Theater: Effekt Loop'
+  mode: restart
+  sequence:
+  - repeat:
+      while:
+      - condition: template
+        value_template: '{{ not is_state(''input_select.theater_phase'', ''Aus'')
+          }}'
+      sequence:
+      - variables:
+          target_light: light.l{{ range(1, 13) | random }}
+          aktuelle_phase: '{{ states(''input_select.theater_phase'') }}'
+      - choose:
+        - conditions: '{{ aktuelle_phase == ''Zickiges Gelb'' }}'
+          sequence:
+          - target:
+              entity_id: '{{ target_light }}'
+            data:
+              rgb_color:
+              - 255
+              - 255
+              - 150
+              brightness_pct: 100
+            action: light.turn_on
+          - delay: '00:00:00.2'
+          - target:
+              entity_id: '{{ target_light }}'
+            data:
+              rgb_color:
+              - 255
+              - 170
+              - 0
+              brightness_pct: 60
+            action: light.turn_on
+          - delay:
+              seconds: '{{ range(1, 4) | random }}'
+        - conditions: '{{ aktuelle_phase == ''Blau mit Gelb-Blitz'' }}'
+          sequence:
+          - target:
+              entity_id: '{{ target_light }}'
+            data:
+              rgb_color:
+              - 255
+              - 200
+              - 0
+              brightness_pct: 100
+            action: light.turn_on
+          - delay: '00:00:00.3'
+          - target:
+              entity_id: '{{ target_light }}'
+            data:
+              rgb_color:
+              - 0
+              - 0
+              - 255
+              brightness_pct: 50
+            action: light.turn_on
+          - delay: 00:00:01
+        - conditions: '{{ aktuelle_phase == ''Rot mit Mix-Blitz'' }}'
+          sequence:
+          - target:
+              entity_id: '{{ target_light }}'
+            data:
+              rgb_color: '{{ [[255,200,0], [0,0,255], [255,255,255]] | random }}'
+              brightness_pct: 100
+            action: light.turn_on
+          - delay: '00:00:00.2'
+          - target:
+              entity_id: '{{ target_light }}'
+            data:
+              rgb_color:
+              - 255
+              - 0
+              - 0
+              brightness_pct: 70
+            action: light.turn_on
+          - delay: '00:00:00.8'
+        - conditions: '{{ aktuelle_phase == ''Chaos Blitzen'' }}'
+          sequence:
+          - target:
+              entity_id: light.l{{ range(1, 13) | random }}
+            data:
+              rgb_color:
+              - '{{ range(0,256)|random }}'
+              - '{{ range(0,256)|random }}'
+              - '{{ range(0,256)|random }}'
+              brightness_pct: '{{ range(50,101)|random }}'
+            action: light.turn_on
+          - delay: '00:00:00.1'
+  description: ''
+'1773916816363':
+  alias: KÃ¶nigin Weint - Starkregen Final
+  mode: restart
+  sequence:
+  - action: input_number.set_value
+    target:
+      entity_id: input_number.regen_aktuell
+    data:
+      value: '{{ states(''input_number.regen_tempo'') | float(0) }}'
+  - action: light.turn_off
+    target:
+      entity_id:
+      - light.l1
+      - light.l2
+      - light.l3
+      - light.l4
+      - light.l5
+      - light.l6
+      - light.l7
+      - light.l8
+      - light.l9
+      - light.l10
+      - light.l11
+      - light.l12
+  - parallel:
+    - sequence:
+      - repeat:
+          while:
+          - condition: template
+            value_template: '{{ true }}'
+          sequence:
+          - variables:
+              ziel: '{{ states(''input_number.regen_tempo'') | float(0) }}'
+              aktuell: '{{ states(''input_number.regen_aktuell'') | float(0) }}'
+              neu: "{% if ziel > aktuell %}\n  {{ [aktuell + 2, ziel] | min }}\n{%
+                elif ziel < aktuell %}\n  {{ [aktuell - 2, ziel] | max }}\n{% else
+                %}\n  {{ aktuell }}\n{% endif %}\n"
+          - action: input_number.set_value
+            target:
+              entity_id: input_number.regen_aktuell
+            data:
+              value: '{{ neu }}'
+          - delay: '00:00:00.2'
+    - sequence:
+      - repeat:
+          while:
+          - condition: template
+            value_template: '{{ true }}'
+          sequence:
+          - variables:
+              slider_val: '{{ states(''input_number.regen_aktuell'') | float(0) }}'
+              base_delay: '{{ [4.0 - (slider_val * 0.0375), 0.25] | max }}'
+              selected_color: "{% if slider_val < 40 %}\n  {{ [[255,0,0], [255,255,0],
+                [0,0,255]] | random }}\n{% else %}\n  [ {{ range(0, 256)|random }},
+                {{ range(0, 256)|random }}, {{ range(0, 256)|random }} ]\n{% endif
+                %}\n"
+              selected_light: "{% set all = ['light.l1','light.l2','light.l3','light.l4','light.l5','light.l6','light.l7','light.l8','light.l9','light.l10','light.l11','light.l12'] %}{% if slider_val < 20 %}{{ all[(repeat.index - 1) % 12] }}{% else %}{% set free = all | select('is_state', 'off') | list %}{{ (free if free | count > 0 else all) | random }}{% endif %}"
+          - if:
+            - condition: template
+              value_template: '{{ selected_light != ''none'' }}'
+            then:
+            - action: script.turn_on
+              target:
+                entity_id: script.einzeltropfen
+              data:
+                variables:
+                  target_light: '{{ selected_light }}'
+                  drop_color: '{{ selected_color }}'
+          - delay:
+              seconds: '{{ base_delay * ((range(80, 120) | random) / 100.0) }}'
+  description: ''
