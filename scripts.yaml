@@ -1006,7 +1006,7 @@ theater_streit_flash_helper_v2:
       description: Zweite Flash-Farbe
   sequence:
   - delay:
-      milliseconds: '{{ range(100, 2500) | random }}'
+      milliseconds: '{{ range(40, 800) | random }}'
   - repeat:
       while:
       - condition: template
@@ -1170,7 +1170,7 @@ theater_streit_phase_2_v2:
       brightness_pct: 50
       transition: 0
   - delay:
-      milliseconds: 300
+      milliseconds: 120
   - parallel:
     - action: script.turn_on
       target:
@@ -1315,7 +1315,7 @@ theater_streit_phase_3_v2:
       brightness_pct: 50
       transition: 0
   - delay:
-      milliseconds: 300
+      milliseconds: 120
   - parallel:
     - action: script.turn_on
       target:
@@ -1460,7 +1460,7 @@ theater_streit_phase_4_v2:
       brightness_pct: 50
       transition: 0
   - delay:
-      milliseconds: 300
+      milliseconds: 120
   - parallel:
     - action: script.turn_on
       target:
@@ -1605,7 +1605,7 @@ theater_streit_phase_5_v2:
       brightness_pct: 50
       transition: 0
   - delay:
-      milliseconds: 300
+      milliseconds: 120
   - parallel:
     - action: script.turn_on
       target:
@@ -1750,7 +1750,7 @@ theater_streit_phase_6_v2:
       brightness_pct: 50
       transition: 0
   - delay:
-      milliseconds: 300
+      milliseconds: 120
   - parallel:
     - action: script.turn_on
       target:
