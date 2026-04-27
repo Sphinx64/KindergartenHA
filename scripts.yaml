@@ -862,8 +862,8 @@ theater_streit_lauf_v2:
 theater_streit_p7_v2:
   alias: 'Theater: Streit Phase 7 (Chaos → Aus → Grau)'
   description: >-
-    ~12,2s Chaos: kurze Pause nach Master-Stop, dann 12 Helfer parallel; 12,2s
-    Pause; aus; 3s; Grau 1 % (Chaos-Helper: weniger Befehle/s fuer Tuya).
+    ~12s Chaos: 4s Farbwechsel, 8s nur dunkler (Helligkeit, keine
+    Entsättigung). Pause; aus; 3s; Grau 1 %.
   icon: mdi:lightning-bolt-circle
   mode: restart
   sequence:
@@ -950,7 +950,7 @@ theater_streit_p7_v2:
       data:
         variables:
           lamp: light.l12
-  - delay: '00:00:12.2'
+  - delay: '00:00:12'
   - action: light.turn_off
     target:
       entity_id:
@@ -1048,9 +1048,9 @@ theater_streit_chaos_helper_v2:
   mode: parallel
   max: 12
   description: >-
-    ~12,2s: (lamp_index+chaos_n)%3 Farben, langsames Ausdimmen, mind. 30% solange
-    >0. Tuya: hoehere Mindestdelay zwischen Befehlen, kurze transition gegen
-    Paketstau.
+    4s volle Helligkeit mit R/B/G-Rotation, 8s nur Abdunkeln (Helligkeit);
+    Farben bleiben gesättigt, keine Entsättigung. 12s, ab 4s etwas längere
+    Pausen zum Entlasten.
   fields:
     lamp:
       description: Ziel-Lampen-Entity
@@ -1060,25 +1060,35 @@ theater_streit_chaos_helper_v2:
   - repeat:
       while:
       - condition: template
-        value_template: '{{ (now().timestamp() - (chaos_start | float(0))) < 12.2 }}'
+        value_template: '{{ (now().timestamp() - (chaos_start | float(0))) < 12.0 }}'
       sequence:
       - variables:
           streit_chaos_n: '{{ (streit_chaos_n | default(0) | int) + 1 }}'
       - variables:
           elapsed: "{{ (now().timestamp() | float(0)) - (chaos_start | float(0)) }}"
       - variables:
-          chaos_br: '{{ [(100 - (elapsed | float(0) / 20 * 100)) | int, 0] | max }}'
-      - variables:
           s: '{{ states(''input_number.theater_master_speed'') | int(50) }}'
+      - variables:
+          t_cha: "{{ elapsed | float(0) }}"
+      - variables:
+          chaos_kf: "{{ 0.0 if (t_cha | float(0)) < 4.0 else (([1.0, [0.0, ((t_cha | float(0) - 4.0) / 8.0)] | max] | min) | float(0)) }}"
+      - variables:
+          chaos_env: "{{ (100.0 * (1.0 - ((chaos_kf | float(0)) ** 1.18))) | float(0) }}"
+      - variables:
+          chaos_master_pct: "{{ [((states('input_number.theater_master_brightness') | float(500) / 10) | int(50)), 100] | min | int }}"
+      - variables:
+          chaos_bright: "{{ 0 if (chaos_env | float(0)) < 0.5 else (((chaos_env | float(0)) * (chaos_master_pct | int(0)) / 100.0) | round(0) | int) }}"
+      - variables:
+          chaos_tran: "{{ 0.12 if t_cha | float(0) < 4.0 else 0.5 }}"
       - action: light.turn_on
         target:
           entity_id: '{{ lamp }}'
         data:
-          rgb_color: '{% set li = lamp | replace(''light.l'', '''') | int(1) %}{% set names = [''gelb'', ''blau'', ''rot''] %}{% set idx = (li + (streit_chaos_n | int(0))) % 3 %}{% set cn = names[idx] %}{% set cs = states(''input_text.theater_farbe_'' ~ cn) %}{{ (cs if '','' in cs else ''255,255,255'').split('','') | map(''int'') | list }}'
-          brightness_pct: '{{ 0 if (chaos_br | int(0)) < 1 else ([chaos_br | int(0), 30] | max) }}'
-          transition: 0.12
+          rgb_color: '{% set li = lamp | replace(''light.l'', '''') | int(1) %}{% set names = [''gelb'', ''blau'', ''rot''] %}{% set idx = (li + (streit_chaos_n | int(0))) % 3 %}{% set cs = states(''input_text.theater_farbe_'' ~ names[idx]) %}{% set p = (cs if '','' in cs else ''255,255,255'').split('','') | map(''int'') | list %}{{ [p[0] | int, p[1] | int, p[2] | int] }}'
+          brightness_pct: "{{ chaos_bright | int(0) }}"
+          transition: "{{ chaos_tran | float(0) }}"
       - delay:
-          milliseconds: '{{ ([(155 - s) | int, 100] | max) + ((now().timestamp() * 1000) | int + (lamp | replace(''light.l'', '''') | int(1)) * 13) % 120 }}'
+          milliseconds: '{{ ( (220 if t_cha | float(0) >= 4.0 else 0) + ([(155 - s) | int, 100] | max) + ( ((now().timestamp() * 1000) | int + (lamp | replace(''light.l'', '''') | int(1)) * 13) % 120 ) ) | int(0) }}'
 
 theater_streit_naechste_phase_v2:
   alias: 'Theater: Streit nächste Phase'
