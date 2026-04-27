@@ -29,18 +29,14 @@ einzeltropfen:
     target:
       entity_id: '{{ target_light }}'
     data:
-      rgb_color: '{{ drop_color }}'
       brightness_pct: 12
       transition: 0.35
   - delay:
-      milliseconds: 320
+      milliseconds: 500
   - action: light.turn_off
     target:
       entity_id: '{{ target_light }}'
-    data:
-      transition: 2.1
-  description: 'Tropfen: Flash, kurz abdimmen, dann ein stetiger Verlauf bis aus.'
-
+  description: 'Tropfen: Flash dann 3-stufiger Fade ueber 1.3s (Tuya-kompatibel)'
 theater_neutral_v2:
   alias: 'Theater: Neutral v2'
   icon: mdi:lightbulb-on-outline
@@ -75,7 +71,6 @@ theater_neutral_v2:
       brightness_pct: '{{ [(states(''input_number.theater_master_brightness'') | float(500)
         / 10) | int, 100] | min }}'
       transition: 0
-
 theater_blau_v2:
   alias: 'Theater: Blau v2'
   icon: mdi:water
@@ -120,7 +115,8 @@ theater_blau_v2:
     data:
       rgb_color: '{% set c = states(''input_text.theater_farbe_blau'') %}{{ (c if
         '','' in c else ''0,150,255'').split('','') | map(''int'') | list }}'
-      brightness_pct: 100
+      brightness_pct: '{{ [(states(''input_number.theater_master_brightness'') | float(500)
+        / 10) | int, 100] | min }}'
       transition: 3
   - delay: '00:00:00.5'
   - action: light.turn_on
@@ -132,7 +128,8 @@ theater_blau_v2:
     data:
       rgb_color: '{% set c = states(''input_text.theater_farbe_blau'') %}{{ (c if
         '','' in c else ''0,150,255'').split('','') | map(''int'') | list }}'
-      brightness_pct: 100
+      brightness_pct: '{{ [(states(''input_number.theater_master_brightness'') | float(500)
+        / 10) | int, 100] | min }}'
       transition: 3
   - delay: '00:00:00.5'
   - action: light.turn_on
@@ -144,7 +141,8 @@ theater_blau_v2:
     data:
       rgb_color: '{% set c = states(''input_text.theater_farbe_blau'') %}{{ (c if
         '','' in c else ''0,150,255'').split('','') | map(''int'') | list }}'
-      brightness_pct: 100
+      brightness_pct: '{{ [(states(''input_number.theater_master_brightness'') | float(500)
+        / 10) | int, 100] | min }}'
       transition: 3
   - delay: '00:00:00.5'
   - action: light.turn_on
@@ -156,9 +154,9 @@ theater_blau_v2:
     data:
       rgb_color: '{% set c = states(''input_text.theater_farbe_blau'') %}{{ (c if
         '','' in c else ''0,150,255'').split('','') | map(''int'') | list }}'
-      brightness_pct: 100
+      brightness_pct: '{{ [(states(''input_number.theater_master_brightness'') | float(500)
+        / 10) | int, 100] | min }}'
       transition: 3
-
 theater_rot_v2:
   alias: 'Theater: Rot v2'
   icon: mdi:fire
@@ -502,9 +500,9 @@ theater_rot_v2:
     data:
       rgb_color: '{% set c = states(''input_text.theater_farbe_rot'') %}{{ (c if '',''
         in c else ''255,0,0'').split('','') | map(''int'') | list }}'
-      brightness_pct: 100
+      brightness_pct: '{{ [(states(''input_number.theater_master_brightness'') | float(500)
+        / 10) | int, 100] | min }}'
       transition: 0
-
 theater_gelb_v2:
   alias: 'Theater: Gelb v2'
   icon: mdi:white-balance-sunny
@@ -560,9 +558,9 @@ theater_gelb_v2:
     data:
       rgb_color: '{% set c = states(''input_text.theater_farbe_gelb'') %}{{ (c if
         '','' in c else ''255,126,13'').split('','') | map(''int'') | list }}'
-      brightness_pct: 100
+      brightness_pct: '{{ [(states(''input_number.theater_master_brightness'') | float(500)
+        / 10) | int, 100] | min }}'
       transition: 6
-
 theater_giftgelb_v2:
   alias: 'Theater: Giftgelb v2'
   icon: mdi:palette
@@ -599,82 +597,6 @@ theater_giftgelb_v2:
       brightness_pct: '{{ [(states(''input_number.theater_master_brightness'') | float(500)
         / 10) | int, 100] | min }}'
       transition: 6
-
-theater_zu_neutral_v2:
-  alias: 'Theater: Zu Neutral (Farbe→Weiß, oder Aus→75%)'
-  icon: mdi:lightbulb-auto
-  mode: restart
-  description: >-
-    Mindestens eine Lampe an: sanft auf Neutralweiß (per Master-Helligkeit), dann
-    theater_neutral_v2. Alle aus: langsam auf Neutralweiß 75 % (Slider 750), ohne
-    den Neutral-Start zu wiederholen.
-  sequence:
-  - choose:
-    - conditions:
-      - condition: template
-        value_template: >
-          {{ expand(['light.l1','light.l2','light.l3','light.l4','light.l5','light.l6','light.l7','light.l8','light.l9','light.l10','light.l11','light.l12'])
-             | selectattr('state', 'eq', 'on') | list | length == 0 }}
-      sequence:
-        - action: script.turn_on
-          target:
-            entity_id: script.theater_master_stop_v2
-        - action: input_number.set_value
-          target:
-            entity_id: input_number.theater_master_brightness
-          data:
-            value: 750
-        - action: light.turn_on
-          target:
-            entity_id:
-            - light.l1
-            - light.l2
-            - light.l3
-            - light.l4
-            - light.l5
-            - light.l6
-            - light.l7
-            - light.l8
-            - light.l9
-            - light.l10
-            - light.l11
-            - light.l12
-          data:
-            rgb_color: '{% set c = states(''input_text.theater_farbe_neutral'') %}{{ (c
-              if '','' in c else ''255,255,255'').split('','') | map(''int'') | list }}'
-            brightness_pct: 75
-            transition: 4
-    default:
-      - action: script.turn_on
-        target:
-          entity_id: script.theater_master_stop_v2
-      - action: light.turn_on
-        target:
-          entity_id:
-          - light.l1
-          - light.l2
-          - light.l3
-          - light.l4
-          - light.l5
-          - light.l6
-          - light.l7
-          - light.l8
-          - light.l9
-          - light.l10
-          - light.l11
-          - light.l12
-        data:
-          rgb_color: '{% set c = states(''input_text.theater_farbe_neutral'') %}{{ (c
-            if '','' in c else ''255,255,255'').split('','') | map(''int'') | list }}'
-          brightness_pct: '{{ [(states(''input_number.theater_master_brightness'') | float(500)
-            / 10) | int, 100] | min }}'
-          transition: 3
-      - delay:
-          seconds: 3
-      - action: script.turn_on
-        target:
-          entity_id: script.theater_neutral_v2
-
 theater_grau_v2:
   alias: 'Theater: Grau v2'
   icon: mdi:cloud
@@ -767,7 +689,6 @@ theater_grau_v2:
           brightness_pct: 1
           transition: '{{ [3.5 - (s / 100.0) * 3.2, 0.2] | max | round(2) }}'
       - delay: '00:00:03.5'
-
 theater_streit_lauf_v2:
   alias: 'Theater: Streit – Phasen 1–6'
   icon: mdi:lightning-bolt
@@ -848,7 +769,6 @@ theater_streit_lauf_v2:
             | int(1) %}{% set s = states(''input_number.theater_master_speed'') |
             int(50) %}{% set w = ([420 - s * 7.5, 32] | max) | int %}{% if p in [4,5,6]
             %}{{ (w * 0.42) | int }}{% else %}{{ (w * 0.58) | int }}{% endif %}'
-
 theater_streit_p7_v2:
   alias: 'Theater: Streit Phase 7 (Chaos → Aus → Grau)'
   description: ~12,2s Chaos (Helfer + P7-Pause synchron), dann aus, 3s, Grau 1%.
@@ -975,108 +895,6 @@ theater_streit_p7_v2:
         else ''252,237,252'').split('','') | map(''int'') | list }}'
       brightness_pct: 1
       transition: 2.5
-
-theater_streit_flash_helper_v2:
-  alias: 'Theater: Streit Flash Helper'
-  icon: mdi:flash
-  mode: parallel
-  max: 50
-  fields:
-    lamp:
-      description: Ziel-Lampen-Entity (z.B. light.l1)
-    base_name:
-      description: 'Basisfarbe: ''gelb'' | ''blau'' | ''rot'''
-    flash1_name:
-      description: Erste Flash-Farbe
-    flash2_name:
-      description: Zweite Flash-Farbe
-  sequence:
-  - delay:
-      milliseconds: '{{ range(100, 2500) | random }}'
-  - repeat:
-      while:
-      - condition: template
-        value_template: 'true'
-      sequence:
-      - variables:
-          s: '{{ states(''input_number.theater_master_speed'') | int(50) }}'
-          flash_name: '{{ flash1_name if (range(2) | random) == 0 else flash2_name
-            }}'
-          flash_ms: '{{ [(280 - s * 2) | int, 90] | max | int }}'
-          wait_ms: '{{ [(2500 - s * 22) | int, 200] | max | int + (range(0, 800) |
-            random) }}'
-      - action: light.turn_on
-        target:
-          entity_id: '{{ lamp }}'
-        data:
-          rgb_color: '{% set fs = states(''input_text.theater_farbe_'' ~ flash_name)
-            %}{{ (fs if '','' in fs else ''255,255,255'').split('','') | map(''int'')
-            | list }}'
-          brightness_pct: 100
-          transition: 0
-      - delay:
-          milliseconds: '{{ flash_ms }}'
-      - action: light.turn_on
-        target:
-          entity_id: '{{ lamp }}'
-        data:
-          rgb_color: '{% set bs = states(''input_text.theater_farbe_'' ~ base_name)
-            %}{{ (bs if '','' in bs else ''255,255,255'').split('','') | map(''int'')
-            | list }}'
-          brightness_pct: 50
-          transition: 0.2
-      - delay:
-          milliseconds: '{{ wait_ms }}'
-
-theater_streit_chaos_helper_v2:
-  alias: 'Theater: Streit Chaos Helper'
-  icon: mdi:shuffle-variant
-  mode: parallel
-  max: 12
-  description: '~12,2s Schleife: (li+streit_chaos_n)%3. Dimmung langsamer (20s-Spanne
-    bis 0), min 30% sichtbar solange Helligkeit>0, damit die Phase nicht vorzeitig
-    ''tot'' wirkt.'
-  fields:
-    lamp:
-      description: Ziel-Lampen-Entity
-  sequence:
-  - variables:
-      chaos_start: '{{ now().timestamp() | float(0) }}'
-  - repeat:
-      while:
-      - condition: template
-        value_template: '{{ (now().timestamp() - (chaos_start | float(0))) < 12.2 }}'
-      sequence:
-      - variables:
-          streit_chaos_n: '{{ (streit_chaos_n | default(0) | int) + 1 }}'
-      - variables:
-          elapsed: "{{ (now().timestamp() | float(0)) - (chaos_start | float(0)) }}"
-      - variables:
-          chaos_br: '{{ [(100 - (elapsed | float(0) / 20 * 100)) | int, 0] | max }}'
-      - variables:
-          s: '{{ states(''input_number.theater_master_speed'') | int(50) }}'
-      - action: light.turn_on
-        target:
-          entity_id: '{{ lamp }}'
-        data:
-          rgb_color: '{% set li = lamp | replace(''light.l'', '''') | int(1) %}{% set names = [''gelb'', ''blau'', ''rot''] %}{% set idx = (li + (streit_chaos_n | int(0))) % 3 %}{% set cn = names[idx] %}{% set cs = states(''input_text.theater_farbe_'' ~ cn) %}{{ (cs if '','' in cs else ''255,255,255'').split('','') | map(''int'') | list }}'
-          brightness_pct: '{{ 0 if (chaos_br | int(0)) < 1 else ([chaos_br | int(0), 30] | max) }}'
-          transition: 0
-      - delay:
-          milliseconds: '{{ ([(95 - s) | int, 28] | max | int) + ((now().timestamp() * 1000) | int + (lamp | replace(''light.l'', '''') | int(1)) * 11) % 75 }}'
-
-theater_streit_naechste_phase_v2:
-  alias: 'Theater: Streit nächste Phase'
-  icon: mdi:skip-next
-  mode: single
-  sequence:
-  - action: input_number.set_value
-    target:
-      entity_id: input_number.theater_streit_phase
-    data:
-      value: '{{ (states(''input_number.theater_streit_phase'') | int(1) % 8) + 1
-        }}'
-
 theater_streit_phase_1_v2:
   alias: 'Theater: Streit P1 (Giftgelb still)'
   icon: mdi:circle
@@ -1110,7 +928,6 @@ theater_streit_phase_1_v2:
         else ''180,255,0'').split('','') | map(''int'') | list }}'
       brightness_pct: 50
       transition: 0
-
 theater_streit_phase_2_v2:
   alias: 'Theater: Streit P2 (Blau + Gelb)'
   icon: mdi:circle
@@ -1255,7 +1072,6 @@ theater_streit_phase_2_v2:
           base_name: blau
           flash1_name: gelb
           flash2_name: gelb
-
 theater_streit_phase_3_v2:
   alias: 'Theater: Streit P3 (Rot + Blau/Gelb)'
   icon: mdi:circle
@@ -1400,7 +1216,6 @@ theater_streit_phase_3_v2:
           base_name: rot
           flash1_name: blau
           flash2_name: gelb
-
 theater_streit_phase_4_v2:
   alias: 'Theater: Streit P4 (Gelb + Rot/Blau)'
   icon: mdi:circle
@@ -1545,7 +1360,6 @@ theater_streit_phase_4_v2:
           base_name: gelb
           flash1_name: rot
           flash2_name: blau
-
 theater_streit_phase_5_v2:
   alias: 'Theater: Streit P5 (Blau + Gelb/Rot)'
   icon: mdi:circle
@@ -1690,7 +1504,6 @@ theater_streit_phase_5_v2:
           base_name: blau
           flash1_name: gelb
           flash2_name: rot
-
 theater_streit_phase_6_v2:
   alias: 'Theater: Streit P6 (Rot + Gelb/Blau)'
   icon: mdi:circle
@@ -1864,7 +1677,6 @@ theater_master_stop_v2:
       - script.theater_regen_v2
       - script.theater_tranen_v2
       - script.theater_tranen_helper_v2
-      - script.theater_zu_neutral_v2
       - script.einzeltropfen
       sequence:
       - condition: template
@@ -2082,9 +1894,6 @@ theater_regen_v2:
       - light.l10
       - light.l11
       - light.l12
-    data:
-      transition: 3.5
-  - delay: '00:00:04'
   - action: input_text.set_value
     target:
       entity_id: input_text.theater_regen_last_color
@@ -2146,176 +1955,102 @@ theater_regen_v2:
           drop_color: '{{ drop_rgb }}'
       - delay:
           milliseconds: '{{ total_delay_ms }}'
-
-theater_tranen_helper_v2:
+theater_streit_flash_helper_v2:
+  alias: 'Theater: Streit Flash Helper'
+  icon: mdi:flash
   mode: parallel
-  max: 12
+  max: 50
   fields:
     lamp:
-      description: Lampen-Entity-ID
-    hue:
-      description: Farbton (0-359)
+      description: Ziel-Lampen-Entity (z.B. light.l1)
+    base_name:
+      description: 'Basisfarbe: ''gelb'' | ''blau'' | ''rot'''
+    flash1_name:
+      description: Erste Flash-Farbe
+    flash2_name:
+      description: Zweite Flash-Farbe
   sequence:
-  - action: light.turn_on
-    target:
-      entity_id: '{{ lamp }}'
-    data:
-      hs_color:
-      - '{{ hue }}'
-      - 100
-      brightness_pct: 100
-      transition: 0.1
-  - delay: '0:00:01.1'
-  - action: light.turn_off
-    target:
-      entity_id: '{{ lamp }}'
-    data:
-      transition: 2.1
-  - delay: '0:00:01'
-theater_tranen_v2:
-  alias: 'Theater: Tränen'
-  icon: mdi:water-drop
-  mode: restart
-  sequence:
-  - action: input_text.set_value
-    target:
-      entity_id: input_text.theater_master_stop_skip
-    data:
-      value: script.theater_tranen_v2
-  - action: script.theater_master_stop_v2
-  - variables:
-      drop_colors:
-      - 0
-      - 240
-      - 60
-      - 300
-      - 120
-      - 180
-      - 30
-      - 270
-      - 90
-      - 210
-      - 150
-      - 330
-      drop_idx: 0
-      last_lamp: 0
+  - delay:
+      milliseconds: '{{ range(100, 2500) | random }}'
   - repeat:
       while:
       - condition: template
         value_template: 'true'
       sequence:
       - variables:
-          s: '{{ states(''input_number.theater_master_speed'') | float(50) }}'
-          hue: '{{ drop_colors[drop_idx % 12] }}'
-          delay_sec: '{{ [0.2, 8.2 - s * 0.082] | max | round(2) }}'
-          lamp_num: '{{ range(1, 13) | list | shuffle | reject(''equalto'', last_lamp
-            | int) | first }}'
-      - variables:
-          drop_idx: '{{ drop_idx + 1 }}'
-          last_lamp: '{{ lamp_num }}'
-      - action: script.turn_on
-        target:
-          entity_id: script.theater_tranen_helper_v2
-        data:
-          variables:
-            lamp: "light.l{{ lamp_num }}"
-            hue: '{{ hue }}'
-      - delay: '{{ delay_sec }}'
-theater_streit_start:
-  alias: 'Theater: Streit Start'
-  icon: mdi:play-circle
-  mode: restart
-  sequence:
-  - action: script.theater_master_stop_v2
-  - action: script.turn_on
-    target:
-      entity_id: script.theater_streit_phase_1_v2
-theater_streit_next:
-  alias: 'Theater: Streit Weiter'
-  icon: mdi:skip-next
-  mode: restart
-  sequence:
-  - variables:
-      current_phase: '{{ ''3'' if is_state(''script.theater_streit_phase_3_v2'',
-        ''on'') else ''2'' if is_state(''script.theater_streit_phase_2_v2'', ''on'')
-        else ''1'' }}'
-  - variables:
-      next_phase: '{{ [current_phase | int + 1, 3] | min }}'
-  - action: script.theater_master_stop_v2
-  - action: script.turn_on
-    target:
-      entity_id: "script.theater_streit_phase_{{ next_phase }}_v2"
-theater_streit_prev:
-  alias: 'Theater: Streit Zurück'
-  icon: mdi:skip-previous
-  mode: restart
-  sequence:
-  - variables:
-      current_phase: '{{ ''1'' if is_state(''script.theater_streit_phase_1_v2'',
-        ''on'') else ''2'' if is_state(''script.theater_streit_phase_2_v2'', ''on'')
-        else ''3'' }}'
-  - variables:
-      prev_phase: '{{ [current_phase | int - 1, 1] | max }}'
-  - action: script.theater_master_stop_v2
-  - action: script.turn_on
-    target:
-      entity_id: "script.theater_streit_phase_{{ prev_phase }}_v2"
-theater_fade_to_black_v2:
-  alias: 'Theater: Fade to Black'
-  icon: mdi:weather-night
-  mode: restart
-  sequence:
-  - action: input_text.set_value
-    target:
-      entity_id: input_text.theater_master_stop_skip
-    data:
-      value: script.theater_fade_to_black_v2
-  - action: script.theater_master_stop_v2
-  - repeat:
-      count: 20
-      sequence:
+          s: '{{ states(''input_number.theater_master_speed'') | int(50) }}'
+          flash_name: '{{ flash1_name if (range(2) | random) == 0 else flash2_name
+            }}'
+          flash_ms: '{{ [(280 - s * 2) | int, 90] | max | int }}'
+          wait_ms: '{{ [(2500 - s * 22) | int, 200] | max | int + (range(0, 800) |
+            random) }}'
       - action: light.turn_on
         target:
-          entity_id:
-          - light.l1
-          - light.l2
-          - light.l3
-          - light.l4
-          - light.l5
-          - light.l6
-          - light.l7
-          - light.l8
-          - light.l9
-          - light.l10
-          - light.l11
-          - light.l12
+          entity_id: '{{ lamp }}'
         data:
-          brightness_step_pct: -5
+          rgb_color: '{% set fs = states(''input_text.theater_farbe_'' ~ flash_name)
+            %}{{ (fs if '','' in fs else ''255,255,255'').split('','') | map(''int'')
+            | list }}'
+          brightness_pct: 100
+          transition: 0
       - delay:
-          milliseconds: 125
-  - action: light.turn_off
-    target:
-      entity_id:
-      - light.l1
-      - light.l2
-      - light.l3
-      - light.l4
-      - light.l5
-      - light.l6
-      - light.l7
-      - light.l8
-      - light.l9
-      - light.l10
-      - light.l11
-      - light.l12
-    data:
-      transition: 0
-theater_blackout_screen:
-  alias: 'Beamer: Blackout Screen (F1) — ADB'
-  icon: mdi:monitor-off
+          milliseconds: '{{ flash_ms }}'
+      - action: light.turn_on
+        target:
+          entity_id: '{{ lamp }}'
+        data:
+          rgb_color: '{% set bs = states(''input_text.theater_farbe_'' ~ base_name)
+            %}{{ (bs if '','' in bs else ''255,255,255'').split('','') | map(''int'')
+            | list }}'
+          brightness_pct: 50
+          transition: 0.2
+      - delay:
+          milliseconds: '{{ wait_ms }}'
+theater_streit_chaos_helper_v2:
+  alias: 'Theater: Streit Chaos Helper'
+  icon: mdi:shuffle-variant
+  mode: parallel
+  max: 12
+  description: '~12,2s: (li+streit_chaos_n)%3; Dimmung/20; min 30% solange>0'
+  fields:
+    lamp:
+      description: Ziel-Lampen-Entity
+  sequence:
+  - variables:
+      chaos_start: '{{ now().timestamp() | float(0) }}'
+  - repeat:
+      while:
+      - condition: template
+        value_template: '{{ (now().timestamp() - (chaos_start | float(0))) < 12.2 }}'
+      sequence:
+      - variables:
+          streit_chaos_n: '{{ (streit_chaos_n | default(0) | int) + 1 }}'
+      - variables:
+          elapsed: "{{ (now().timestamp() | float(0)) - (chaos_start | float(0)) }}"
+      - variables:
+          chaos_br: '{{ [(100 - (elapsed | float(0) / 20 * 100)) | int, 0] | max }}'
+      - variables:
+          s: '{{ states(''input_number.theater_master_speed'') | int(50) }}'
+      - action: light.turn_on
+        target:
+          entity_id: '{{ lamp }}'
+        data:
+          rgb_color: '{% set li = lamp | replace(''light.l'', '''') | int(1) %}{% set names = [''gelb'', ''blau'', ''rot''] %}{% set idx = (li + (streit_chaos_n | int(0))) % 3 %}{% set cn = names[idx] %}{% set cs = states(''input_text.theater_farbe_'' ~ cn) %}{{ (cs if '','' in cs else ''255,255,255'').split('','') | map(''int'') | list }}'
+          brightness_pct: '{{ 0 if (chaos_br | int(0)) < 1 else ([chaos_br | int(0), 30] | max) }}'
+          transition: 0
+      - delay:
+          milliseconds: '{{ ([(95 - s) | int, 28] | max | int) + ((now().timestamp() * 1000) | int + (lamp | replace(''light.l'', '''') | int(1)) * 11) % 75 }}'
+theater_streit_naechste_phase_v2:
+  alias: 'Theater: Streit nächste Phase'
+  icon: mdi:skip-next
   mode: single
   sequence:
-  - action: shell_command.beamer_keyevent_f1
+  - action: input_number.set_value
+    target:
+      entity_id: input_number.theater_streit_phase
+    data:
+      value: '{{ (states(''input_number.theater_streit_phase'') | int(1) % 8) + 1
+        }}'
 beamer_f1:
   alias: 'Beamer: F1 (Bild schwarz)'
   description: F1, dann Vol-Up/Vol-Down — weckt die Fernbedienung wieder auf.
@@ -2436,6 +2171,7 @@ beamer_fokus_adb_2099:
   mode: single
   sequence:
   - action: shell_command.beamer_keyevent_2099
+# F1-Variante (Zusatz; vorher nur im Dateiende-Block vorkommend)
 beamer_f1_richtig:
   alias: 'Beamer: F1 richtig(Bild schwarz)'
   description: F1, dann Vol-Up/Vol-Down — weckt die Fernbedienung wieder auf.
@@ -2458,215 +2194,3 @@ beamer_f1_richtig:
       entity_id: remote.xgimi_horizon
     data:
       command: VOLUME_DOWN
-
-helligkeitsregler_10:
-  alias: 'Master Helligkeit 10 %'
-  icon: mdi:brightness-percent
-  mode: single
-  sequence:
-  - action: input_number.set_value
-    target:
-      entity_id: input_number.theater_master_brightness
-    data:
-      value: 100
-helligkeitsregler_20:
-  alias: 'Master Helligkeit 20 %'
-  icon: mdi:brightness-percent
-  mode: single
-  sequence:
-  - action: input_number.set_value
-    target:
-      entity_id: input_number.theater_master_brightness
-    data:
-      value: 200
-helligkeitsregler_30:
-  alias: 'Master Helligkeit 30 %'
-  icon: mdi:brightness-percent
-  mode: single
-  sequence:
-  - action: input_number.set_value
-    target:
-      entity_id: input_number.theater_master_brightness
-    data:
-      value: 300
-helligkeitsregler_40:
-  alias: 'Master Helligkeit 40 %'
-  icon: mdi:brightness-percent
-  mode: single
-  sequence:
-  - action: input_number.set_value
-    target:
-      entity_id: input_number.theater_master_brightness
-    data:
-      value: 400
-helligkeitsregler_50:
-  alias: 'Master Helligkeit 50 %'
-  icon: mdi:brightness-percent
-  mode: single
-  sequence:
-  - action: input_number.set_value
-    target:
-      entity_id: input_number.theater_master_brightness
-    data:
-      value: 500
-helligkeitsregler_60:
-  alias: 'Master Helligkeit 60 %'
-  icon: mdi:brightness-percent
-  mode: single
-  sequence:
-  - action: input_number.set_value
-    target:
-      entity_id: input_number.theater_master_brightness
-    data:
-      value: 600
-helligkeitsregler_70:
-  alias: 'Master Helligkeit 70 %'
-  icon: mdi:brightness-percent
-  mode: single
-  sequence:
-  - action: input_number.set_value
-    target:
-      entity_id: input_number.theater_master_brightness
-    data:
-      value: 700
-helligkeitsregler_80:
-  alias: 'Master Helligkeit 80 %'
-  icon: mdi:brightness-percent
-  mode: single
-  sequence:
-  - action: input_number.set_value
-    target:
-      entity_id: input_number.theater_master_brightness
-    data:
-      value: 800
-helligkeitsregler_90:
-  alias: 'Master Helligkeit 90 %'
-  icon: mdi:brightness-percent
-  mode: single
-  sequence:
-  - action: input_number.set_value
-    target:
-      entity_id: input_number.theater_master_brightness
-    data:
-      value: 900
-helligkeitsregler_100:
-  alias: 'Master Helligkeit 100 %'
-  icon: mdi:brightness-percent
-  mode: single
-  sequence:
-  - action: input_number.set_value
-    target:
-      entity_id: input_number.theater_master_brightness
-    data:
-      value: 1000
-
-geschwindigkeitsregler_0:
-  alias: 'Master Speed 0 (langsamst)'
-  icon: mdi:speedometer-slow
-  mode: single
-  sequence:
-  - action: input_number.set_value
-    target:
-      entity_id: input_number.theater_master_speed
-    data:
-      value: 0
-geschwindigkeitsregler_10:
-  alias: 'Master Speed 10'
-  icon: mdi:speedometer
-  mode: single
-  sequence:
-  - action: input_number.set_value
-    target:
-      entity_id: input_number.theater_master_speed
-    data:
-      value: 10
-geschwindigkeitsregler_20:
-  alias: 'Master Speed 20'
-  icon: mdi:speedometer
-  mode: single
-  sequence:
-  - action: input_number.set_value
-    target:
-      entity_id: input_number.theater_master_speed
-    data:
-      value: 20
-geschwindigkeitsregler_30:
-  alias: 'Master Speed 30'
-  icon: mdi:speedometer
-  mode: single
-  sequence:
-  - action: input_number.set_value
-    target:
-      entity_id: input_number.theater_master_speed
-    data:
-      value: 30
-geschwindigkeitsregler_40:
-  alias: 'Master Speed 40'
-  icon: mdi:speedometer
-  mode: single
-  sequence:
-  - action: input_number.set_value
-    target:
-      entity_id: input_number.theater_master_speed
-    data:
-      value: 40
-geschwindigkeitsregler_50:
-  alias: 'Master Speed 50'
-  icon: mdi:speedometer
-  mode: single
-  sequence:
-  - action: input_number.set_value
-    target:
-      entity_id: input_number.theater_master_speed
-    data:
-      value: 50
-geschwindigkeitsregler_60:
-  alias: 'Master Speed 60'
-  icon: mdi:speedometer
-  mode: single
-  sequence:
-  - action: input_number.set_value
-    target:
-      entity_id: input_number.theater_master_speed
-    data:
-      value: 60
-geschwindigkeitsregler_70:
-  alias: 'Master Speed 70'
-  icon: mdi:speedometer
-  mode: single
-  sequence:
-  - action: input_number.set_value
-    target:
-      entity_id: input_number.theater_master_speed
-    data:
-      value: 70
-geschwindigkeitsregler_80:
-  alias: 'Master Speed 80'
-  icon: mdi:speedometer
-  mode: single
-  sequence:
-  - action: input_number.set_value
-    target:
-      entity_id: input_number.theater_master_speed
-    data:
-      value: 80
-geschwindigkeitsregler_90:
-  alias: 'Master Speed 90'
-  icon: mdi:speedometer
-  mode: single
-  sequence:
-  - action: input_number.set_value
-    target:
-      entity_id: input_number.theater_master_speed
-    data:
-      value: 90
-geschwindigkeitsregler_100:
-  alias: 'Master Speed 100'
-  icon: mdi:speedometer
-  mode: single
-  sequence:
-  - action: input_number.set_value
-    target:
-      entity_id: input_number.theater_master_speed
-    data:
-      value: 100

@@ -164,3 +164,9 @@ lovelace:
       icon: mdi:script-text-outline
       show_in_sidebar: true
       filename: dashboards/alle_skripte.yaml
+    v2-theater:
+      mode: yaml
+      title: Theater Regie
+      icon: mdi:theater
+      show_in_sidebar: true
+      filename: dashboards/theater_regie.yaml

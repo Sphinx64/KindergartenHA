@@ -1,0 +1,255 @@
+# Theater Regie – Skripte: script.theater_* / script.beamer_* / theater_blackout_screen (scripts.yaml); Tempo: theater_master_speed
+title: Theater Regie
+views:
+  - title: Regie-Pult
+    icon: mdi:theater
+    panel: true
+    cards:
+      - type: grid
+        columns: 3
+        square: false
+        cards:
+          - type: vertical-stack
+            cards:
+              - type: entities
+                title: Master Steuerung
+                entities:
+                  - entity: input_number.theater_master_brightness
+                    name: Helligkeit (Alle)
+                  - entity: input_number.theater_master_speed
+                    name: Geschwindigkeit (Effekte, Tränen/Regen, Streit, …)
+                  # Bisher regen_tempo – v2-Skripte nutzen theater_master_speed
+              - type: entities
+                title: Notfall & Stop
+                entities:
+                  - entity: script.theater_master_stop_v2
+                    name: Master Stop (Licht anlassen)
+                    icon: mdi:stop-circle-outline
+                    tap_action:
+                      action: call-service
+                      service: script.turn_on
+                      target:
+                        entity_id: script.theater_master_stop_v2
+                  - entity: script.theater_fade_to_black_v2
+                    name: Fade to Black (5s)
+                    icon: mdi:weather-night
+                  - entity: script.theater_blackout_v2
+                    name: BLACKOUT (Sofort)
+                    icon: mdi:power
+              - type: vertical-stack
+                cards:
+                  - type: grid
+                    columns: 2
+                    square: false
+                    cards:
+                      - type: button
+                        name: Beamer Blackout
+                        icon: mdi:monitor-off
+                        tap_action:
+                          action: perform-action
+                          perform_action: script.turn_on
+                          target:
+                            entity_id: script.theater_blackout_screen
+                      - type: button
+                        name: ■ Master Stop
+                        icon: mdi:stop-circle-outline
+                        tap_action:
+                          action: call-service
+                          service: script.turn_on
+                          target:
+                            entity_id: script.theater_master_stop_v2
+          - type: vertical-stack
+            cards:
+              - type: markdown
+                content: '### Licht-Szenen'
+              - type: grid
+                columns: 3
+                square: false
+                cards:
+                  - type: button
+                    name: Neutral
+                    icon: mdi:lightbulb-on-outline
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.theater_neutral_v2
+                  - type: button
+                    name: Blau
+                    icon: mdi:water
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.theater_blau_v2
+                  - type: button
+                    name: Rot
+                    icon: mdi:fire
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.theater_rot_v2
+                  - type: button
+                    name: Gelb
+                    icon: mdi:white-balance-sunny
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.theater_gelb_v2
+                  - type: button
+                    name: Grau
+                    icon: mdi:cloud
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.theater_grau_v2
+                  - type: button
+                    name: Tränen
+                    icon: mdi:water-plus
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.theater_tranen_v2
+                  - type: button
+                    name: Regen
+                    icon: mdi:weather-pouring
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.theater_regen_v2
+                  - type: button
+                    name: Streit Start
+                    icon: mdi:play-circle
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.theater_streit_start
+                  - type: button
+                    name: ‹ Zurück
+                    icon: mdi:skip-previous
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.theater_streit_prev
+                  - type: button
+                    name: Weiter ›
+                    icon: mdi:skip-next
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.theater_streit_next
+                  - type: button
+                    name: Finale
+                    icon: mdi:gradient-horizontal
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.theater_finale_v2
+          - type: vertical-stack
+            cards:
+              - type: markdown
+                content: '### Beamer (XGIMI Horizon)'
+              - type: media-control
+                entity: media_player.xgimi_horizon_2
+              - type: grid
+                columns: 2
+                square: false
+                cards:
+                  - type: button
+                    name: Bild aus (Blackout)
+                    icon: mdi:monitor-off
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.theater_blackout_screen
+                  - type: button
+                    name: F1
+                    icon: mdi:keyboard-f1
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.beamer_f1
+                  - type: button
+                    name: Home
+                    icon: mdi:home
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.beamer_home
+                  - type: button
+                    name: Zurück
+                    icon: mdi:arrow-left
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.beamer_zurueck
+                  - type: button
+                    name: Leiser
+                    icon: mdi:volume-minus
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.beamer_leiser
+                  - type: button
+                    name: Lauter
+                    icon: mdi:volume-plus
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.beamer_lauter
+                  - type: button
+                    name: Ein/Aus
+                    icon: mdi:power
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.beamer_power
+                  - type: button
+                    name: Fokus
+                    icon: mdi:image-filter-center-focus
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.beamer_fokus
+                  - type: button
+                    name: Fokus 2099 (ADB)
+                    icon: mdi:usb
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.beamer_fokus_adb_2099
+  - type: masonry
+    path: alternativ
+    title: Alternativ
+    cards:
+      - type: button
+        name: Finale (Regenbogen)
+        show_name: true
+        icon: mdi:gradient-horizontal
+        tap_action:
+          action: perform-action
+          perform_action: script.turn_on
+          target:
+            entity_id: script.theater_finale_v2
+      - type: entities
+        title: Bühnenlichter
+        entities:
+          - light.buhnenlichter_alle

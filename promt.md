@@ -38,3 +38,12 @@ Dieses Dokument enthält die vollständige Dramaturgie und die technischen Licht
 
 * Helligkeit: input\_number.theater\_master\_brightness (10-1000)  
 * Tempo: input\_number.theater\_master\_speed (beeinflusst transition und Blitz-Frequenz)
+
+---
+
+## **Anhang: Hinweise für neue KI-Agents**
+
+Onboarding, Dateistruktur, Helper-Überblick und Arbeitsablauf (inkl. `agent_prompts/` und `.cursorrules`):
+
+* **Vollständige Infodatei (Markdown):** [AGENTEN_INFO.md](AGENTEN_INFO.md)  
+* **Gleicher Inhalt als reine Textdatei:** [AGENTEN_INFO.txt](AGENTEN_INFO.txt)

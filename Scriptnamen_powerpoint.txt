@@ -1,0 +1,69 @@
+# Home Assistant Skripte — PowerPoint-Sync (object_id = Skriptname ohne script.-Präfix)
+# Spalten: Skriptname — Stichwort-Beschreibung (für Makro/Bridge: Entity script.<name>)
+
+einzeltropfen — Tropfen-Effekt, eine Lampe, Farbe variabel
+theater_neutral_v2 — Neutralweiß, alle l1–l12 gleich, greift Master-Helligkeit
+theater_zu_neutral_v2 — Von Farbe zu Neutralweiß (3s), dann neutral_v2; wenn alles aus: langsam 75% Neutralweiß
+theater_blau_v2 — Blau, zuerst Neutral, dann Wellen (4 Gruppen nacheinander)
+theater_rot_v2 — Rot, Aufbau Blitz/Sequenz, dramatisch
+theater_gelb_v2 — Gelb, erst Neutral-Fade, dann Voll-Gelb
+theater_giftgelb_v2 — Giftgelb direkt, langer Fade
+theater_grau_v2 — Grau, sehr dimm, sanfte Puls-Schleife (Speed-Regler)
+theater_streit_lauf_v2 — Streit Phasen 1–6, Endlosschleife (Phasenwahl per Slider)
+theater_streit_p7_v2 — Streit Phase 7: Chaos ~12s, aus, kurz, Grau 1%
+theater_streit_flash_helper_v2 — nur Helper: Flash zwischen Farben (Streit)
+theater_streit_chaos_helper_v2 — nur Helper: Chaos-Farben pro Lampe (Streit P7)
+theater_streit_naechste_phase_v2 — Streit-Phasen-Slider +1 (1–8)
+theater_streit_phase_1_v2 — Streit P1, Giftgelb still
+theater_streit_phase_2_v2 — Streit P2, Blau + Gelb-Flashes
+theater_streit_phase_3_v2 — Streit P3, Rot + Blau/Gelb-Flashes
+theater_streit_phase_4_v2 — Streit P4, Gelb + Rot/Blau-Flashes
+theater_streit_phase_5_v2 — Streit P5, Blau + Gelb/Rot-Flashes
+theater_streit_phase_6_v2 — Streit P6, Rot + Gelb/Blau-Flashes
+theater_master_stop_v2 — stoppt laufende Theater-Skripte, Skip leeren
+theater_blackout_v2 — alles stoppen, alle Lampen aus
+theater_finale_helper_v2 — nur Helper: eine Lampe Regenbogen-HS
+theater_finale_v2 — Finale, 12 Lampen Regenbogen phasenversetzt
+theater_regen_v2 — Regen: Phase Farbmix, dann Regenbogen-Tropfen
+theater_tranen_helper_v2 — nur Helper: ein Tränen-Tropfen (HS + Aus)
+theater_tranen_v2 — Tränen, viele Farbtöne nacheinander
+theater_streit_start — Streit Start, springt in P1
+theater_streit_next — Streit weiter (P1–P3 je nach laufender Phase)
+theater_streit_prev — Streit zurück (P1–P3)
+theater_fade_to_black_v2 — Fade to Black, −5% in 2,5s, dann alle aus
+theater_blackout_screen — Beamer: F1 per ADB (Bild schwarz / Screen)
+beamer_f1 — Beamer: F1 + Vol wachhalten (Remote)
+beamer_f1_robust — Beamer: Vol dann F1 doppelt (robust)
+beamer_home — Beamer: Home
+beamer_zurueck — Beamer: Zurück
+beamer_leiser — Beamer: leiser
+beamer_lauter — Beamer: lauter
+beamer_power — Beamer: Ein/Aus
+beamer_fokus — Beamer: Fokus (Remote)
+beamer_fokus_adb_2099 — Beamer: Fokus per ADB Keyevent
+beamer_f1_richtig — Beamer: F1 + Vol (Variante Verzögerung)
+
+# Master-Helligkeitsregler (input_number.theater_master_brightness: 100 = 10 %, …, 1000 = 100 %)
+helligkeitsregler_10 — Helligkeits-Slider 10 Prozent
+helligkeitsregler_20 — Helligkeits-Slider 20 Prozent
+helligkeitsregler_30 — Helligkeits-Slider 30 Prozent
+helligkeitsregler_40 — Helligkeits-Slider 40 Prozent
+helligkeitsregler_50 — Helligkeits-Slider 50 Prozent
+helligkeitsregler_60 — Helligkeits-Slider 60 Prozent
+helligkeitsregler_70 — Helligkeits-Slider 70 Prozent
+helligkeitsregler_80 — Helligkeits-Slider 80 Prozent
+helligkeitsregler_90 — Helligkeits-Slider 90 Prozent
+helligkeitsregler_100 — Helligkeits-Slider 100 Prozent
+
+# Master-Geschwindigkeitsregler (input_number.theater_master_speed: 0–100; Wert 0 = langsamst, dann 10, 20, … 100)
+geschwindigkeitsregler_0 — Geschwindigkeits-Slider 0 (langsamst)
+geschwindigkeitsregler_10 — Geschwindigkeits-Slider 10
+geschwindigkeitsregler_20 — Geschwindigkeits-Slider 20
+geschwindigkeitsregler_30 — Geschwindigkeits-Slider 30
+geschwindigkeitsregler_40 — Geschwindigkeits-Slider 40
+geschwindigkeitsregler_50 — Geschwindigkeits-Slider 50
+geschwindigkeitsregler_60 — Geschwindigkeits-Slider 60
+geschwindigkeitsregler_70 — Geschwindigkeits-Slider 70
+geschwindigkeitsregler_80 — Geschwindigkeits-Slider 80
+geschwindigkeitsregler_90 — Geschwindigkeits-Slider 90
+geschwindigkeitsregler_100 — Geschwindigkeits-Slider 100

@@ -101,3 +101,13 @@ Master-Speed: Die Geschwindigkeit von Blitzen oder Fades muss sich dem master_sp
 
 
 Blackout: light.turn_off für alle, stoppt alle laufenden Skript-Schleifen. 
+
+
+6. Anhang: Hinweise für neue KI-Agents
+
+Onboarding, Dateistruktur, Helper-Überblick und Arbeitsablauf (inkl. agent_prompts/ und .cursorrules):
+
+- AGENTEN_INFO.md  (Markdown, im gleichen Ordner wie diese Datei)
+- AGENTEN_INFO.txt (identischer Inhalt als Klartext)
+
+Diese Dateien ergänzen promt.md (Dramaturgie) und Promt.txt (technische Referenz) und sind für alle neuen Agents als erster Anlaufpunkt gedacht.

@@ -1,0 +1,70 @@
+================================================================================
+  ONBOARDING: HOME ASSISTANT / THEATER-AUTOMATISIERUNG (KI-AGENTS)
+================================================================================
+
+Kurzreferenz fuer neue KI-Agents. Ergaenzt promt.md (Dramaturgie) und
+Promt.txt (technische Stueck-Referenz).
+
+1. PROJEKTKONTEXT
+   - Regie- und Effektbeleuchtung: Stueck/Projekt "Malwida und die Farben"
+     (Kindergarten / Theater).
+   - Kern: 12 unabhaengige Lampen, Timing und Synchronisation sind kritisch.
+   - Medien: Beamer, Musik, Tablet-UI. Beamer: Erreichbarkeit pruefen, nicht
+     blind Befehle senden.
+
+2. LAUFZEIT
+   - Plattform: Home Assistant (u.a. Raspberry Pi, LAN)
+   - Lampen: Local Tuya | 12x LEDVANCE SMART+ Wi-Fi
+   - Entitaeten: light.l1 bis light.l12 (diese IDs verwenden)
+   - README: KindergartenHA (kurz im Config-Root)
+
+3. LAYOUT 3x4
+   - Vorne:  L1 L2 L3 L4
+   - Mitte:  L5 L6 L7 L8
+   - Hinten: L9 L10 L11 L12
+   - Gruppen: group.theater_al, theater_ml, theater_mr, theater_ar
+     (siehe configuration.yaml)
+
+4. WICHTIGSTE DATEIEN
+   - configuration.yaml  : Einstieg, Helper, shell_command (optional ADB/Beamer),
+                          Lovelace-Dashboard "Alle Skripte"
+   - scripts.yaml        : Hauptlogik, viele script.alt_* (u.a. v2)
+   - automations.yaml    : Automationen
+   - scenes.yaml         : Szenen
+   - dashboards/alle_skripte.yaml  : Uebersicht vieler Skripte
+   - agent_prompts/     : technische Ausfuehrungsplaene
+   - .cursorrules        : Rollen- und Arbeitsregeln Theater
+
+5. ZENTRALE HELFER (AUSZUG)
+   - input_number.theater_master_brightness  (v2: oft /10 fuer brightness_pct)
+   - input_number.theater_master_speed       (dynamisch in Skripten)
+   - input_number.theater_streit_phase
+   - input_text.theater_farbe_*              RGB als "R,G,B"
+   - Weitere: configuration.yaml, von Skripten abhaengig
+
+6. KONVENTIONEN
+   - Viele Skripte: script.alt_*; Stop: z.B. script.alt_theater_master_stop_v2,
+     Blackout: script.alt_theater_blackout_v2
+   - WLAN/Mesh: Delays zwischen Befehlen; neu: parallel vs. leicht versetzt
+     abwaegen
+   - Lovelace: tap_action perform-action, direkte Skriptaufrufe (kein Pop-up
+     noetig)
+
+7. WORKFLOW (verbindlich laut .cursorrules)
+   - NEUE timing-relevante Ablaeufe: ZUERST technischen Plan in
+     agent_prompts/ (Markdown) ablegen, DANN implementieren.
+   - Checkliste: parallel vs. sequenziell; brightness_pct + transition klar;
+     Beamer: Erreichbarkeit vor "Film starten"
+
+8. BEAMER (OPTIONAL)
+   - shell_command mit ADB-Keyevents in configuration.yaml nur sinnvoll, wenn
+     ADB/Netz passt. Nicht global voraussetzen.
+
+9. DOKU-SET
+   - promt.md      : Dramaturgie
+   - Promt.txt     : technische Stueck-Referenz
+   - AGENTEN_INFO  : dieses Onboarding (Markdown + Text)
+
+Bei Widerspruechen: YAML in configuration.yaml und scripts.yaml gewinnt.
+
+================================================================================
