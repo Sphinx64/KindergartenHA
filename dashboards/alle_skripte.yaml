@@ -28,6 +28,8 @@ views:
                 name: Giftgelb
               - entity: script.theater_grau_v2
                 name: Grau
+              - entity: script.theater_zu_neutral_v2
+                name: Zu Neutral (Farbe→weiß / Aus→75%)
           - type: markdown
             content: |
               ## Global
@@ -40,6 +42,54 @@ views:
                 name: Blackout
               - entity: script.theater_fade_to_black_v2
                 name: Fade to Black
+          - type: markdown
+            content: |
+              ## Master-Regler (Helligkeit / Geschwindigkeit per Skript)
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: script.helligkeitsregler_10
+                name: Helligkeit 10 %
+              - entity: script.helligkeitsregler_20
+                name: Helligkeit 20 %
+              - entity: script.helligkeitsregler_30
+                name: Helligkeit 30 %
+              - entity: script.helligkeitsregler_40
+                name: Helligkeit 40 %
+              - entity: script.helligkeitsregler_50
+                name: Helligkeit 50 %
+              - entity: script.helligkeitsregler_60
+                name: Helligkeit 60 %
+              - entity: script.helligkeitsregler_70
+                name: Helligkeit 70 %
+              - entity: script.helligkeitsregler_80
+                name: Helligkeit 80 %
+              - entity: script.helligkeitsregler_90
+                name: Helligkeit 90 %
+              - entity: script.helligkeitsregler_100
+                name: Helligkeit 100 %
+              - entity: script.geschwindigkeitsregler_0
+                name: Speed 0
+              - entity: script.geschwindigkeitsregler_10
+                name: Speed 10
+              - entity: script.geschwindigkeitsregler_20
+                name: Speed 20
+              - entity: script.geschwindigkeitsregler_30
+                name: Speed 30
+              - entity: script.geschwindigkeitsregler_40
+                name: Speed 40
+              - entity: script.geschwindigkeitsregler_50
+                name: Speed 50
+              - entity: script.geschwindigkeitsregler_60
+                name: Speed 60
+              - entity: script.geschwindigkeitsregler_70
+                name: Speed 70
+              - entity: script.geschwindigkeitsregler_80
+                name: Speed 80
+              - entity: script.geschwindigkeitsregler_90
+                name: Speed 90
+              - entity: script.geschwindigkeitsregler_100
+                name: Speed 100
           - type: markdown
             content: |
               ## Finale & große Effekte
@@ -118,7 +168,21 @@ views:
                 name: Blackout Screen (F1)
               - entity: script.beamer_f1
                 name: F1
+              - entity: script.beamer_f1_robust
+                name: F1 robust
+              - entity: script.beamer_f1_richtig
+                name: F1 richtig
+              - entity: script.beamer_home
+                name: Home
+              - entity: script.beamer_zurueck
+                name: Zurück
               - entity: script.beamer_lauter
                 name: Lauter
               - entity: script.beamer_leiser
                 name: Leiser
+              - entity: script.beamer_power
+                name: Ein/Aus
+              - entity: script.beamer_fokus
+                name: Fokus
+              - entity: script.beamer_fokus_adb_2099
+                name: Fokus 2099 (ADB)

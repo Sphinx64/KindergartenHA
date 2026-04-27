@@ -5,20 +5,10 @@ views:
     icon: mdi:theater
     panel: true
     cards:
-      - type: grid
-        columns: 3
-        square: false
+      - type: horizontal-stack
         cards:
           - type: vertical-stack
             cards:
-              - type: entities
-                title: Master Steuerung
-                entities:
-                  - entity: input_number.theater_master_brightness
-                    name: Helligkeit (Alle)
-                  - entity: input_number.theater_master_speed
-                    name: Geschwindigkeit (Effekte, Tränen/Regen, Streit, …)
-                  # Bisher regen_tempo – v2-Skripte nutzen theater_master_speed
               - type: entities
                 title: Notfall & Stop
                 entities:
@@ -31,33 +21,211 @@ views:
                       target:
                         entity_id: script.theater_master_stop_v2
                   - entity: script.theater_fade_to_black_v2
-                    name: Fade to Black (5s)
+                    name: Fade to Black (2,5s)
                     icon: mdi:weather-night
                   - entity: script.theater_blackout_v2
                     name: BLACKOUT (Sofort)
                     icon: mdi:power
-              - type: vertical-stack
+              - type: markdown
+                content: "#### Helligkeit % (Skripte)"
+              - type: grid
+                columns: 5
+                square: false
                 cards:
-                  - type: grid
-                    columns: 2
-                    square: false
-                    cards:
-                      - type: button
-                        name: Beamer Blackout
-                        icon: mdi:monitor-off
-                        tap_action:
-                          action: perform-action
-                          perform_action: script.turn_on
-                          target:
-                            entity_id: script.theater_blackout_screen
-                      - type: button
-                        name: ■ Master Stop
-                        icon: mdi:stop-circle-outline
-                        tap_action:
-                          action: call-service
-                          service: script.turn_on
-                          target:
-                            entity_id: script.theater_master_stop_v2
+                  - type: button
+                    name: "10"
+                    show_icon: false
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.helligkeitsregler_10
+                  - type: button
+                    name: "20"
+                    show_icon: false
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.helligkeitsregler_20
+                  - type: button
+                    name: "30"
+                    show_icon: false
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.helligkeitsregler_30
+                  - type: button
+                    name: "40"
+                    show_icon: false
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.helligkeitsregler_40
+                  - type: button
+                    name: "50"
+                    show_icon: false
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.helligkeitsregler_50
+                  - type: button
+                    name: "60"
+                    show_icon: false
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.helligkeitsregler_60
+                  - type: button
+                    name: "70"
+                    show_icon: false
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.helligkeitsregler_70
+                  - type: button
+                    name: "80"
+                    show_icon: false
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.helligkeitsregler_80
+                  - type: button
+                    name: "90"
+                    show_icon: false
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.helligkeitsregler_90
+                  - type: button
+                    name: "100"
+                    show_icon: false
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.helligkeitsregler_100
+              - type: markdown
+                content: "#### Geschw. (Skripte, 0 + 10er)"
+              - type: grid
+                columns: 5
+                square: false
+                cards:
+                  - type: button
+                    name: "0"
+                    show_icon: false
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.geschwindigkeitsregler_0
+                  - type: button
+                    name: "10"
+                    show_icon: false
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.geschwindigkeitsregler_10
+                  - type: button
+                    name: "20"
+                    show_icon: false
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.geschwindigkeitsregler_20
+                  - type: button
+                    name: "30"
+                    show_icon: false
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.geschwindigkeitsregler_30
+                  - type: button
+                    name: "40"
+                    show_icon: false
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.geschwindigkeitsregler_40
+                  - type: button
+                    name: "50"
+                    show_icon: false
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.geschwindigkeitsregler_50
+                  - type: button
+                    name: "60"
+                    show_icon: false
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.geschwindigkeitsregler_60
+                  - type: button
+                    name: "70"
+                    show_icon: false
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.geschwindigkeitsregler_70
+                  - type: button
+                    name: "80"
+                    show_icon: false
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.geschwindigkeitsregler_80
+                  - type: button
+                    name: "90"
+                    show_icon: false
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.geschwindigkeitsregler_90
+                  - type: button
+                    name: "100"
+                    show_icon: false
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.geschwindigkeitsregler_100
+              - type: grid
+                columns: 2
+                square: false
+                cards:
+                  - type: button
+                    name: Beamer Blackout
+                    icon: mdi:monitor-off
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.theater_blackout_screen
+                  - type: button
+                    name: ■ Master Stop
+                    icon: mdi:stop-circle-outline
+                    tap_action:
+                      action: call-service
+                      service: script.turn_on
+                      target:
+                        entity_id: script.theater_master_stop_v2
           - type: vertical-stack
             cards:
               - type: markdown
@@ -99,6 +267,22 @@ views:
                       target:
                         entity_id: script.theater_gelb_v2
                   - type: button
+                    name: Giftgelb
+                    icon: mdi:palette
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.theater_giftgelb_v2
+                  - type: button
+                    name: Zu Neutral
+                    icon: mdi:lightbulb-auto
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.theater_zu_neutral_v2
+                  - type: button
                     name: Grau
                     icon: mdi:cloud
                     tap_action:
@@ -123,29 +307,61 @@ views:
                       target:
                         entity_id: script.theater_regen_v2
                   - type: button
-                    name: Streit Start
-                    icon: mdi:play-circle
+                    name: "1"
+                    icon: mdi:numeric-1-circle-outline
                     tap_action:
                       action: perform-action
                       perform_action: script.turn_on
                       target:
-                        entity_id: script.theater_streit_start
+                        entity_id: script.theater_streit_phase_1_v2
                   - type: button
-                    name: ‹ Zurück
-                    icon: mdi:skip-previous
+                    name: "2"
+                    icon: mdi:numeric-2-circle-outline
                     tap_action:
                       action: perform-action
                       perform_action: script.turn_on
                       target:
-                        entity_id: script.theater_streit_prev
+                        entity_id: script.theater_streit_phase_2_v2
                   - type: button
-                    name: Weiter ›
-                    icon: mdi:skip-next
+                    name: "3"
+                    icon: mdi:numeric-3-circle-outline
                     tap_action:
                       action: perform-action
                       perform_action: script.turn_on
                       target:
-                        entity_id: script.theater_streit_next
+                        entity_id: script.theater_streit_phase_3_v2
+                  - type: button
+                    name: "4"
+                    icon: mdi:numeric-4-circle-outline
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.theater_streit_phase_4_v2
+                  - type: button
+                    name: "5"
+                    icon: mdi:numeric-5-circle-outline
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.theater_streit_phase_5_v2
+                  - type: button
+                    name: "6"
+                    icon: mdi:numeric-6-circle-outline
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.theater_streit_phase_6_v2
+                  - type: button
+                    name: "7"
+                    icon: mdi:numeric-7-circle-outline
+                    tap_action:
+                      action: perform-action
+                      perform_action: script.turn_on
+                      target:
+                        entity_id: script.theater_streit_p7_v2
                   - type: button
                     name: Finale
                     icon: mdi:gradient-horizontal
@@ -236,6 +452,17 @@ views:
                       perform_action: script.turn_on
                       target:
                         entity_id: script.beamer_fokus_adb_2099
+          - type: vertical-stack
+            cards:
+              - type: markdown
+                content: "**Master** (Schieberegler)"
+              - type: entities
+                show_header_toggle: false
+                entities:
+                  - entity: input_number.theater_master_brightness
+                    name: Hell %
+                  - entity: input_number.theater_master_speed
+                    name: Speed
   - type: masonry
     path: alternativ
     title: Alternativ
